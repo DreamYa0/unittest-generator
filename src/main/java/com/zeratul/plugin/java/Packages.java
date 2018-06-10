@@ -1,4 +1,4 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.java;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,17 +26,21 @@ public class Packages implements Serializable {
         return packageName;
     }
 
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
     public Packages packageName(String packageName) {
         this.packageName = packageName;
         return this;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
     public String getPackageDesc() {
         return packageDesc;
+    }
+
+    public void setPackageDesc(String packageDesc) {
+        this.packageDesc = packageDesc;
     }
 
     public Packages packageDesc(String packageDesc) {
@@ -44,12 +48,12 @@ public class Packages implements Serializable {
         return this;
     }
 
-    public void setPackageDesc(String packageDesc) {
-        this.packageDesc = packageDesc;
-    }
-
     public Set<Services> getServices() {
         return services;
+    }
+
+    public void setServices(Set<Services> services) {
+        this.services = services;
     }
 
     public Packages services(Set<Services> services) {
@@ -67,10 +71,6 @@ public class Packages implements Serializable {
         this.services.remove(services);
         services.setPackages(null);
         return this;
-    }
-
-    public void setServices(Set<Services> services) {
-        this.services = services;
     }
 
     @Override
@@ -96,9 +96,9 @@ public class Packages implements Serializable {
     @Override
     public String toString() {
         return "Packages{" +
-            "id=" + getId() +
-            ", packageName='" + getPackageName() + "'" +
-            ", packageDesc='" + getPackageDesc() + "'" +
-            "}";
+                "id=" + getId() +
+                ", packageName='" + getPackageName() + "'" +
+                ", packageDesc='" + getPackageDesc() + "'" +
+                "}";
     }
 }

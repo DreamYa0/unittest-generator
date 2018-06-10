@@ -24,7 +24,7 @@ public class Field {
     public boolean isGeneric;
     public String trueType;
 
-    public Field(){
+    public Field() {
 
     }
 

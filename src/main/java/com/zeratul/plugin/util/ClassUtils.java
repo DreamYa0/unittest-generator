@@ -1,4 +1,3 @@
-
 package com.zeratul.plugin.util;
 
 import com.google.common.collect.Lists;

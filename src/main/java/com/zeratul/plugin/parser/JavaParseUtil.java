@@ -1,8 +1,6 @@
-package com.zeratul.plugin.java;
+package com.zeratul.plugin.parser;
 
 import com.google.common.collect.Lists;
-import com.zeratul.plugin.parser.Node;
-import com.zeratul.plugin.parser.PackageParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
@@ -19,23 +17,23 @@ public class JavaParseUtil {
     public static List<JavaParser> parse(String path) {
         List<JavaParser> javas = Lists.newArrayList();
 
-        if(StringUtils.isNotEmpty(path)) {
+        if (StringUtils.isNotEmpty(path)) {
             PackageParser packageParser = new PackageParser(path);
             packageParser.parse();
             List<Node> nodes = packageParser.getNodes();
             Iterator<Node> iterator = nodes.iterator();
 
-            while(true) {
+            while (true) {
                 Node node;
                 do {
-                    if(!iterator.hasNext()) {
+                    if (!iterator.hasNext()) {
                         return javas;
                     }
                     node = iterator.next();
-                } while(!node.hasFile());
+                } while (!node.hasFile());
 
                 Iterator<String> ite = node.getFiles().iterator();
-                while(ite.hasNext()) {
+                while (ite.hasNext()) {
                     String javaFile = ite.next();
 
                     try {

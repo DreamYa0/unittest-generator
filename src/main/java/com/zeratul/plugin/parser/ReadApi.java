@@ -1,9 +1,13 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.parser;
 
 import com.coinsuper.common.model.Request;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
+import com.zeratul.plugin.java.Methods;
+import com.zeratul.plugin.java.RequestParameters;
+import com.zeratul.plugin.java.ResultParameters;
+import com.zeratul.plugin.java.Services;
 import com.zeratul.plugin.util.ClassUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -11,11 +11,11 @@ import java.util.Arrays;
 public class StringUtils {
 
     public static String toLowerCaseFirstOne(String s) {
-        return Character.isLowerCase(s.charAt(0))?s:Character.toLowerCase(s.charAt(0)) + s.substring(1);
+        return Character.isLowerCase(s.charAt(0)) ? s : Character.toLowerCase(s.charAt(0)) + s.substring(1);
     }
 
     public static String toUpperCaseFirstOne(String s) {
-        return Character.isUpperCase(s.charAt(0))?s:Character.toUpperCase(s.charAt(0)) + s.substring(1);
+        return Character.isUpperCase(s.charAt(0)) ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     public static boolean isBasicType(String type) {

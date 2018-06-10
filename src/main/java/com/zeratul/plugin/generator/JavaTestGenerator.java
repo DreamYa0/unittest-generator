@@ -5,9 +5,9 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.zeratul.plugin.java.Field;
 import com.zeratul.plugin.java.JavaAstModel;
-import com.zeratul.plugin.java.JavaParser;
 import com.zeratul.plugin.java.Method;
 import com.zeratul.plugin.java.Pair;
+import com.zeratul.plugin.parser.JavaParser;
 import com.zeratul.plugin.util.FileUtils;
 import com.zeratul.plugin.util.ReflectionUtils;
 import com.zeratul.plugin.util.StringUtils;
@@ -35,7 +35,7 @@ public class JavaTestGenerator {
     public static void generatorList(List<JavaParser> javas, String path) {
         Iterator<JavaParser> iterator = javas.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             JavaParser javaParser = iterator.next();
             generator(javaParser.getModel(), path);
         }
@@ -66,7 +66,7 @@ public class JavaTestGenerator {
         ctx.put("service", model.className);
 
         Iterator<Method> iterator = model.methods.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Method method = iterator.next();
 
             Iterator<Modifier> modifierIte = method.modifiers.iterator();
@@ -74,7 +74,7 @@ public class JavaTestGenerator {
                 Modifier modifier = modifierIte.next();
 
                 // public方法才生成测试用例
-                if(Objects.equals(modifier,com.github.javaparser.ast.Modifier.PUBLIC)){
+                if (Objects.equals(modifier, com.github.javaparser.ast.Modifier.PUBLIC)) {
                     String fileName = "Test" + StringUtils.toUpperCaseFirstOne(method.getName());
                     String genFilePath = basePath + File.separator + model.className.toLowerCase() + File.separator;
                     ctx.put("clazz", fileName);
@@ -99,22 +99,22 @@ public class JavaTestGenerator {
             String basicParam = "data";
             Iterator iterator = method.getParam().iterator();
 
-            while(true) {
-                while(iterator.hasNext()) {
-                    Pair pair = (Pair)iterator.next();
-                    String paramName = (String)pair.getValue();
-                    Field field = (Field)pair.getKey();
-                    if(field.isRequest && StringUtils.isBasicType(field.getJavaType())) {
+            while (true) {
+                while (iterator.hasNext()) {
+                    Pair pair = (Pair) iterator.next();
+                    String paramName = (String) pair.getValue();
+                    Field field = (Field) pair.getKey();
+                    if (field.isRequest && StringUtils.isBasicType(field.getJavaType())) {
                         paramList.add(basicParam);
-                    } else if(model.importsMap.containsKey(field.getJavaType())) {
+                    } else if (model.importsMap.containsKey(field.getJavaType())) {
                         String className = model.importsMap.get(field.getJavaType());
                         Class dtoClass = loadClass(className);
                         List<java.lang.reflect.Field> fields = Lists.newArrayList();
                         ReflectionUtils.getAllFields(dtoClass, fields);
                         Iterator fieldIterator = fields.iterator();
 
-                        while(fieldIterator.hasNext()) {
-                            java.lang.reflect.Field f = (java.lang.reflect.Field)fieldIterator.next();
+                        while (fieldIterator.hasNext()) {
+                            java.lang.reflect.Field f = (java.lang.reflect.Field) fieldIterator.next();
                             paramList.add(f.getName());
                         }
                     } else {

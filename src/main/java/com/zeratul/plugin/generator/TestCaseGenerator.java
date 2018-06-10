@@ -2,8 +2,8 @@ package com.zeratul.plugin.generator;
 
 import com.google.common.collect.Lists;
 import com.zeratul.plugin.generator.http.HttpGenerator;
-import com.zeratul.plugin.java.JavaParseUtil;
-import com.zeratul.plugin.java.JavaParser;
+import com.zeratul.plugin.parser.JavaParseUtil;
+import com.zeratul.plugin.parser.JavaParser;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -67,6 +67,11 @@ public class TestCaseGenerator extends AbstractMojo {
     @Parameter
     private String applicationName;
 
+    public static void main(String[] args) {
+        // HttpGenerator.createRestApiCase("TestPages", "unittest");
+        HttpGenerator.createHttpApiCase("TestPagesHttp", "unittest");
+    }
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         Assert.notNull(testDirectory, "Test Directory is not null");
 
@@ -117,18 +122,13 @@ public class TestCaseGenerator extends AbstractMojo {
         }
 
         if (!CollectionUtils.isEmpty(httpTestMap)) {
-            HttpGenerator.createHttpApiCase( httpTestMap.get("className"),httpTestMap.get("package"));
+            HttpGenerator.createHttpApiCase(httpTestMap.get("className"), httpTestMap.get("package"));
         }
 
         if (!CollectionUtils.isEmpty(restFulTestMap)) {
-            HttpGenerator.createRestApiCase(restFulTestMap.get("className"),restFulTestMap.get("package"));
+            HttpGenerator.createRestApiCase(restFulTestMap.get("className"), restFulTestMap.get("package"));
         }
 
         getLog().info("testDirectory:" + testDirectory);
-    }
-
-    public static void main(String[] args) {
-        // HttpGenerator.createRestApiCase("TestPages", "unittest");
-        HttpGenerator.createHttpApiCase("TestPagesHttp", "unittest");
     }
 }

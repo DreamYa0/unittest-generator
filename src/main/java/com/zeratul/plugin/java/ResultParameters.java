@@ -1,4 +1,4 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.java;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -35,17 +35,21 @@ public class ResultParameters implements Serializable {
         return parameterName;
     }
 
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
     public ResultParameters parameterName(String parameterName) {
         this.parameterName = parameterName;
         return this;
     }
 
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
-    }
-
     public String getParameterType() {
         return parameterType;
+    }
+
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
     }
 
     public ResultParameters parameterType(String parameterType) {
@@ -53,12 +57,12 @@ public class ResultParameters implements Serializable {
         return this;
     }
 
-    public void setParameterType(String parameterType) {
-        this.parameterType = parameterType;
-    }
-
     public String getParameterValue() {
         return parameterValue;
+    }
+
+    public void setParameterValue(String parameterValue) {
+        this.parameterValue = parameterValue;
     }
 
     public ResultParameters parameterValue(String parameterValue) {
@@ -66,12 +70,12 @@ public class ResultParameters implements Serializable {
         return this;
     }
 
-    public void setParameterValue(String parameterValue) {
-        this.parameterValue = parameterValue;
-    }
-
     public String getParameterDesc() {
         return parameterDesc;
+    }
+
+    public void setParameterDesc(String parameterDesc) {
+        this.parameterDesc = parameterDesc;
     }
 
     public ResultParameters parameterDesc(String parameterDesc) {
@@ -79,21 +83,17 @@ public class ResultParameters implements Serializable {
         return this;
     }
 
-    public void setParameterDesc(String parameterDesc) {
-        this.parameterDesc = parameterDesc;
-    }
-
     public Methods getMethods() {
         return methods;
+    }
+
+    public void setMethods(Methods methods) {
+        this.methods = methods;
     }
 
     public ResultParameters methods(Methods methods) {
         this.methods = methods;
         return this;
-    }
-
-    public void setMethods(Methods methods) {
-        this.methods = methods;
     }
 
     @Override
@@ -119,11 +119,11 @@ public class ResultParameters implements Serializable {
     @Override
     public String toString() {
         return "ResultParameters{" +
-            "id=" + getId() +
-            ", parameterName='" + getParameterName() + "'" +
-            ", parameterType='" + getParameterType() + "'" +
-            ", parameterValue='" + getParameterValue() + "'" +
-            ", parameterDesc='" + getParameterDesc() + "'" +
-            "}";
+                "id=" + getId() +
+                ", parameterName='" + getParameterName() + "'" +
+                ", parameterType='" + getParameterType() + "'" +
+                ", parameterValue='" + getParameterValue() + "'" +
+                ", parameterDesc='" + getParameterDesc() + "'" +
+                "}";
     }
 }

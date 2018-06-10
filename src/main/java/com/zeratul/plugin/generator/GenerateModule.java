@@ -3,6 +3,8 @@ package com.zeratul.plugin.generator;
 import com.beust.jcommander.ParameterException;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closer;
+import com.zeratul.plugin.java.Services;
+import com.zeratul.plugin.parser.ReadApi;
 import com.zeratul.plugin.util.ClassUtils;
 import com.zeratul.plugin.util.FileUtils;
 import org.testng.Reporter;

@@ -1,8 +1,8 @@
 package com.zeratul.plugin.generator;
 
 import com.zeratul.plugin.java.JavaAstModel;
-import com.zeratul.plugin.java.JavaParser;
 import com.zeratul.plugin.java.Method;
+import com.zeratul.plugin.parser.JavaParser;
 import com.zeratul.plugin.util.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;

@@ -1,4 +1,4 @@
-package com.zeratul.plugin.java;
+package com.zeratul.plugin.parser;
 
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
@@ -15,6 +15,10 @@ import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.zeratul.plugin.java.Field;
+import com.zeratul.plugin.java.JavaAstModel;
+import com.zeratul.plugin.java.Method;
+import com.zeratul.plugin.java.Pair;
 import com.zeratul.plugin.util.TypeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;

@@ -15,12 +15,12 @@ import java.io.IOException;
  */
 public class HttpGenerator {
 
-    private static String httpServiceName = "";
     //生成文件目录
     private static final String FILE_DIR = "src/test/java/com/atomic/autotest/";
     private static final String EXCEL_DIR = "src/test/resources/com/atomic/autotest/";
     private static final String TEST_FILE_DIR = "src/test/java/com/atomic/autotest/";
     private static final String EXCEL_FILE_DIR = "src/test/resources/com/atomic/autotest/";
+    private static String httpServiceName = "";
 
     public static void createHttpApiCase(String serviceName, String... classify) {
         httpServiceName = serviceName;

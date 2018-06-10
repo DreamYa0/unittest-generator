@@ -29,7 +29,8 @@ import java.util.zip.ZipOutputStream;
  */
 public final class FileUtils {
 
-    private FileUtils(){}
+    private FileUtils() {
+    }
 
     public static Map<String, String> getMapFromFile(File f) {
         Map<String, String> maps = null;
@@ -71,7 +72,6 @@ public final class FileUtils {
 
     /**
      * 用于获取打包中的resources文件
-     *
      * @param filePath
      * @return
      */
@@ -87,7 +87,6 @@ public final class FileUtils {
 
     /**
      * 用于获取执行时的resources文件(可读取test/resources/下的文件,相对路径)
-     *
      * @param filePath
      * @return
      */
@@ -102,7 +101,6 @@ public final class FileUtils {
 
     /**
      * 功 能: 删除文件夹 参 数: strDir 要删除的文件夹名称 返回值: 如果成功true;否则false
-     *
      * @param strDir
      * @return
      */
@@ -129,7 +127,6 @@ public final class FileUtils {
 
     /**
      * 普通写文件
-     *
      * @param genFileName 文件名
      * @param context     内容
      * @throws IOException
@@ -143,7 +140,6 @@ public final class FileUtils {
 
     /**
      * 文件不存在时，创建文件
-     *
      * @param fileName
      */
     public static File checkAndCreateFile(String fileName) {
@@ -163,7 +159,6 @@ public final class FileUtils {
 
     /**
      * 普通写文件
-     *
      * @param file    文件名
      * @param context 内容
      * @throws IOException
@@ -201,7 +196,6 @@ public final class FileUtils {
 
     /**
      * 移动 文件或者文件夹
-     *
      * @param oldPath
      * @param newPath
      * @throws IOException
@@ -213,7 +207,6 @@ public final class FileUtils {
 
     /**
      * 删除 文件或者文件夹
-     *
      * @param filePath
      */
     public static void deleteFile(String filePath) {
@@ -232,7 +225,6 @@ public final class FileUtils {
 
     /**
      * 复制 文件或者文件夹
-     *
      * @param oldPath
      * @param newPath
      * @throws IOException
@@ -261,7 +253,6 @@ public final class FileUtils {
 
     /**
      * 重命名文件
-     *
      * @param file
      * @param name
      * @return
@@ -275,7 +266,6 @@ public final class FileUtils {
 
     /**
      * 压缩多个文件。
-     *
      * @param zipFileName 压缩输出文件名
      * @param files       需要压缩的文件
      * @return
@@ -374,12 +364,12 @@ public final class FileUtils {
 
     public static void writeFile(String genFileDir, String genFileName, String context) throws IOException {
         File genDir = new File(genFileDir);
-        if(!genDir.exists()) {
+        if (!genDir.exists()) {
             genDir.mkdirs();
         }
 
         File file = new File(genFileDir + genFileName);
-        if(!file.exists()) {
+        if (!file.exists()) {
             FileWriter writer = new FileWriter(genFileDir + genFileName);
             writer.write(context);
             writer.close();

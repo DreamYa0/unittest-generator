@@ -26,21 +26,34 @@ import static com.zeratul.plugin.util.StringUtils.parSetName;
  */
 public class GenerateMethod {
 
-    private Method method;
-    private Type request, result;
-    private Map<String, Object> requestMap, resultMap;
+    public static boolean isFilter = true;
     // 过滤清单后续可以考虑可配置
     private static List<String> fillterList = Lists.newArrayList();
-    public static boolean isFilter = true;
 
     static {
         fillterList.add("actionInfo");
         fillterList.add("sid");
     }
 
+    private Method method;
+    private Type request, result;
+    private Map<String, Object> requestMap, resultMap;
+
     public GenerateMethod(Method method) {
         this.method = method;
         init();
+    }
+
+    private static boolean filter(FieldInfo field) {
+        if (!isFilter) {
+            // 不开过滤
+            return false;
+        }
+        if (field == null) {
+            return true;
+        }
+        String name = field.name;
+        return name == null || name.trim().length() == 0 || fillterList.contains(name);
     }
 
     private void init() {
@@ -124,18 +137,6 @@ public class GenerateMethod {
             }
         }
         return maps;
-    }
-
-    private static boolean filter(FieldInfo field) {
-        if (!isFilter) {
-            // 不开过滤
-            return false;
-        }
-        if (field == null) {
-            return true;
-        }
-        String name = field.name;
-        return name == null || name.trim().length() == 0 || fillterList.contains(name);
     }
 
     public Map<String, Object> getRequestMap() {

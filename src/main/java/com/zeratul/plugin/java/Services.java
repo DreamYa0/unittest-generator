@@ -1,4 +1,4 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.java;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -30,17 +30,21 @@ public class Services implements Serializable {
         return serviceName;
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
     public Services serviceName(String serviceName) {
         this.serviceName = serviceName;
         return this;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
     public String getServiceDesc() {
         return serviceDesc;
+    }
+
+    public void setServiceDesc(String serviceDesc) {
+        this.serviceDesc = serviceDesc;
     }
 
     public Services serviceDesc(String serviceDesc) {
@@ -48,12 +52,12 @@ public class Services implements Serializable {
         return this;
     }
 
-    public void setServiceDesc(String serviceDesc) {
-        this.serviceDesc = serviceDesc;
-    }
-
     public Packages getPackages() {
         return packages;
+    }
+
+    public void setPackages(Packages packages) {
+        this.packages = packages;
     }
 
     public Services packages(Packages packages) {
@@ -61,12 +65,12 @@ public class Services implements Serializable {
         return this;
     }
 
-    public void setPackages(Packages packages) {
-        this.packages = packages;
-    }
-
     public Set<Methods> getMethods() {
         return methods;
+    }
+
+    public void setMethods(Set<Methods> methods) {
+        this.methods = methods;
     }
 
     public Services methods(Set<Methods> methods) {
@@ -84,10 +88,6 @@ public class Services implements Serializable {
         this.methods.remove(methods);
         methods.setServices(null);
         return this;
-    }
-
-    public void setMethods(Set<Methods> methods) {
-        this.methods = methods;
     }
 
     @Override
@@ -113,9 +113,9 @@ public class Services implements Serializable {
     @Override
     public String toString() {
         return "Services{" +
-            "id=" + getId() +
-            ", serviceName='" + getServiceName() + "'" +
-            ", serviceDesc='" + getServiceDesc() + "'" +
-            "}";
+                "id=" + getId() +
+                ", serviceName='" + getServiceName() + "'" +
+                ", serviceDesc='" + getServiceDesc() + "'" +
+                "}";
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2018/4/12 下午10:33
  * @since 1.0.0
  */
-public class FlatNode implements Node{
+public class FlatNode implements Node {
 
     private String path;
     private List<String> files = Lists.newArrayList();
@@ -32,7 +32,7 @@ public class FlatNode implements Node{
     }
 
     public void addFile(String filename) {
-        if(filename != null) {
+        if (filename != null) {
             this.files.add(filename);
         }
     }

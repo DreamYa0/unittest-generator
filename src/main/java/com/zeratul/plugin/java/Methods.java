@@ -1,4 +1,4 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.java;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -34,17 +34,21 @@ public class Methods implements Serializable {
         return methodName;
     }
 
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
     public Methods methodName(String methodName) {
         this.methodName = methodName;
         return this;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
     public String getMethodDesc() {
         return methodDesc;
+    }
+
+    public void setMethodDesc(String methodDesc) {
+        this.methodDesc = methodDesc;
     }
 
     public Methods methodDesc(String methodDesc) {
@@ -52,12 +56,12 @@ public class Methods implements Serializable {
         return this;
     }
 
-    public void setMethodDesc(String methodDesc) {
-        this.methodDesc = methodDesc;
-    }
-
     public String getMethodURL() {
         return methodURL;
+    }
+
+    public void setMethodURL(String methodURL) {
+        this.methodURL = methodURL;
     }
 
     public Methods methodURL(String methodURL) {
@@ -65,12 +69,12 @@ public class Methods implements Serializable {
         return this;
     }
 
-    public void setMethodURL(String methodURL) {
-        this.methodURL = methodURL;
-    }
-
     public Services getServices() {
         return services;
+    }
+
+    public void setServices(Services services) {
+        this.services = services;
     }
 
     public Methods services(Services services) {
@@ -78,12 +82,12 @@ public class Methods implements Serializable {
         return this;
     }
 
-    public void setServices(Services services) {
-        this.services = services;
-    }
-
     public Set<RequestParameters> getRequestParameters() {
         return requestParameters;
+    }
+
+    public void setRequestParameters(Set<RequestParameters> requestParameters) {
+        this.requestParameters = requestParameters;
     }
 
     public Methods requestParameters(Set<RequestParameters> requestParameters) {
@@ -103,12 +107,12 @@ public class Methods implements Serializable {
         return this;
     }
 
-    public void setRequestParameters(Set<RequestParameters> requestParameters) {
-        this.requestParameters = requestParameters;
-    }
-
     public Set<ResultParameters> getResultParameters() {
         return resultParameters;
+    }
+
+    public void setResultParameters(Set<ResultParameters> resultParameters) {
+        this.resultParameters = resultParameters;
     }
 
     public Methods resultParameters(Set<ResultParameters> resultParameters) {
@@ -126,10 +130,6 @@ public class Methods implements Serializable {
         this.resultParameters.remove(resultParameters);
         resultParameters.setMethods(null);
         return this;
-    }
-
-    public void setResultParameters(Set<ResultParameters> resultParameters) {
-        this.resultParameters = resultParameters;
     }
 
     @Override
@@ -155,10 +155,10 @@ public class Methods implements Serializable {
     @Override
     public String toString() {
         return "Methods{" +
-            "id=" + getId() +
-            ", methodName='" + getMethodName() + "'" +
-            ", methodDesc='" + getMethodDesc() + "'" +
-            ", methodURL='" + getMethodURL() + "'" +
-            "}";
+                "id=" + getId() +
+                ", methodName='" + getMethodName() + "'" +
+                ", methodDesc='" + getMethodDesc() + "'" +
+                ", methodURL='" + getMethodURL() + "'" +
+                "}";
     }
 }

@@ -1,4 +1,4 @@
-package com.zeratul.plugin.generator;
+package com.zeratul.plugin.java;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -37,17 +37,21 @@ public class RequestParameters implements Serializable {
         return parameterName;
     }
 
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+
     public RequestParameters parameterName(String parameterName) {
         this.parameterName = parameterName;
         return this;
     }
 
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
-    }
-
     public String getParameterType() {
         return parameterType;
+    }
+
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
     }
 
     public RequestParameters parameterType(String parameterType) {
@@ -55,12 +59,12 @@ public class RequestParameters implements Serializable {
         return this;
     }
 
-    public void setParameterType(String parameterType) {
-        this.parameterType = parameterType;
-    }
-
     public String getParameterValue() {
         return parameterValue;
+    }
+
+    public void setParameterValue(String parameterValue) {
+        this.parameterValue = parameterValue;
     }
 
     public RequestParameters parameterValue(String parameterValue) {
@@ -68,21 +72,17 @@ public class RequestParameters implements Serializable {
         return this;
     }
 
-    public void setParameterValue(String parameterValue) {
-        this.parameterValue = parameterValue;
-    }
-
     public String getParameterDesc() {
         return parameterDesc;
+    }
+
+    public void setParameterDesc(String parameterDesc) {
+        this.parameterDesc = parameterDesc;
     }
 
     public RequestParameters parameterDesc(String parameterDesc) {
         this.parameterDesc = parameterDesc;
         return this;
-    }
-
-    public void setParameterDesc(String parameterDesc) {
-        this.parameterDesc = parameterDesc;
     }
 
     public Boolean isParameterRequired() {
@@ -102,13 +102,13 @@ public class RequestParameters implements Serializable {
         return methods;
     }
 
+    public void setMethods(Methods methods) {
+        this.methods = methods;
+    }
+
     public RequestParameters methods(Methods methods) {
         this.methods = methods;
         return this;
-    }
-
-    public void setMethods(Methods methods) {
-        this.methods = methods;
     }
 
     @Override
@@ -134,12 +134,12 @@ public class RequestParameters implements Serializable {
     @Override
     public String toString() {
         return "RequestParameters{" +
-            "id=" + getId() +
-            ", parameterName='" + getParameterName() + "'" +
-            ", parameterType='" + getParameterType() + "'" +
-            ", parameterValue='" + getParameterValue() + "'" +
-            ", parameterDesc='" + getParameterDesc() + "'" +
-            ", parameterRequired='" + isParameterRequired() + "'" +
-            "}";
+                "id=" + getId() +
+                ", parameterName='" + getParameterName() + "'" +
+                ", parameterType='" + getParameterType() + "'" +
+                ", parameterValue='" + getParameterValue() + "'" +
+                ", parameterDesc='" + getParameterDesc() + "'" +
+                ", parameterRequired='" + isParameterRequired() + "'" +
+                "}";
     }
 }
