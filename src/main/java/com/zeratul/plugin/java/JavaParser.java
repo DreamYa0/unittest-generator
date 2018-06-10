@@ -63,7 +63,7 @@ public class JavaParser {
 
     public void parse() throws IOException, ParseException {
 
-        FileInputStream in = new FileInputStream(this.javaFile);
+        FileInputStream in = new FileInputStream(javaFile);
         CompilationUnit cu;
         try {
             cu = com.github.javaparser.JavaParser.parse(in);
@@ -192,7 +192,7 @@ public class JavaParser {
 
             if (StringUtils.isNotEmpty(method.getComments())) {
                 String comments1 = method.getComments();
-                Matcher matcher1 = JavaParser.this.pattern.matcher(comments1);
+                Matcher matcher1 = pattern.matcher(comments1);
                 method.comments = matcher1.replaceAll("");
             }
 
@@ -279,7 +279,7 @@ public class JavaParser {
                         field.enableCheck = false;
                     }
 
-                    JavaParser.this.model.depDtos.add(cu1);
+                    model.depDtos.add(cu1);
                 } else {
                     if (field.getJavaType().length() == 1) {
                         field.enableCheck = false;
@@ -297,13 +297,13 @@ public class JavaParser {
             if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getElementType()), "Date")) {
                 (new VoidVisitorAdapter() {
                     public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-                        JavaParser.this.addWarnInfo(n.getName() + " found Date !!");
+                        addWarnInfo(n.getName() + " found Date !!");
                     }
                 }).visit(cu2, (Object) null);
             } else if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getElementType()), "BigDecimal")) {
                 (new VoidVisitorAdapter() {
                     public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-                        JavaParser.this.addWarnInfo(n.getName() + " found BigDecimal !!");
+                        addWarnInfo(n.getName() + " found BigDecimal !!");
                     }
                 }).visit(cu2, (Object) null);
             }
@@ -322,7 +322,7 @@ public class JavaParser {
                 model.comments = n.getJavadoc().toString();
             }
 
-            if (JavaParser.this.model.comments != null && n.getComment().isPresent()) {
+            if (model.comments != null && n.getComment().isPresent()) {
                 model.comments = n.getComment().get().getContent();
             }
 
@@ -330,14 +330,14 @@ public class JavaParser {
             if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getExtendedTypes()))) {
                 itr = n.getExtendedTypes().iterator();
                 while (itr.hasNext()) {
-                    JavaParser.this.model.parents.add((itr.next()).getName().getId());
+                    model.parents.add((itr.next()).getName().getId());
                 }
             }
 
             if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getImplementedTypes()))) {
                 itr = n.getExtendedTypes().iterator();
                 while (itr.hasNext()) {
-                    JavaParser.this.model.interfazzs.add((itr.next()).getName().getId());
+                    model.interfazzs.add((itr.next()).getName().getId());
                 }
             }
         }
@@ -349,8 +349,8 @@ public class JavaParser {
 
         public void visit(ImportDeclaration n, Object arg) {
             if (n.isAsterisk()) {
-                JavaParser.this.warnInfo.add("---import * 不支持---" + n.getName().toString());
-                JavaParser.this.terminate = true;
+                warnInfo.add("---import * 不支持---" + n.getName().toString());
+                terminate = true;
             }
 
             model.imports.add("\\" + StringUtils.replace(n.getName().toString(), ".", "\\"));

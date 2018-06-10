@@ -3,6 +3,7 @@ package com.zeratul.plugin.java;
 import com.google.common.collect.Lists;
 import com.zeratul.plugin.parser.Node;
 import com.zeratul.plugin.parser.PackageParser;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,8 @@ public class JavaParseUtil {
 
     public static List<JavaParser> parse(String path) {
         List<JavaParser> javas = Lists.newArrayList();
-        if(path != null && !path.equals("")) {
+
+        if(StringUtils.isNotEmpty(path)) {
             PackageParser packageParser = new PackageParser(path);
             packageParser.parse();
             List<Node> nodes = packageParser.getNodes();
@@ -29,12 +31,10 @@ public class JavaParseUtil {
                     if(!iterator.hasNext()) {
                         return javas;
                     }
-
                     node = iterator.next();
                 } while(!node.hasFile());
 
                 Iterator<String> ite = node.getFiles().iterator();
-
                 while(ite.hasNext()) {
                     String javaFile = ite.next();
 
@@ -43,6 +43,7 @@ public class JavaParseUtil {
                         javaParser.parse();
                         javas.add(javaParser);
                     } catch (Exception e) {
+
                     }
                 }
             }

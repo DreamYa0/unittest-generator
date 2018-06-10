@@ -1,5 +1,6 @@
 package com.zeratul.plugin.generator;
 
+import com.google.common.collect.Lists;
 import com.zeratul.plugin.generator.http.HttpGenerator;
 import com.zeratul.plugin.java.JavaParseUtil;
 import com.zeratul.plugin.java.JavaParser;
@@ -39,10 +40,10 @@ public class TestCaseGenerator extends AbstractMojo {
     private String classDirectory;
 
     /**
-     * 单测被测类包路径
+     * 目标类文件路径
      */
     @Parameter
-    private String[] unitTestPackage;
+    private List<String> classPath;
 
     /**
      * HTTP接口生成信息
@@ -86,8 +87,33 @@ public class TestCaseGenerator extends AbstractMojo {
             }
         }
 
-        if (Objects.nonNull(unitTestPackage) && unitTestPackage.length > 0) {
-            new GenerateModule().unitTest(testDirectory, unitTestPackage);
+
+        if (Boolean.FALSE.equals(CollectionUtils.isEmpty(classPath))) {
+            // 如果是SpringBoot项目，且填入了Application主类名
+            if (Objects.nonNull(applicationName)) {
+                JavaTestGenerator.setSpringBootApplicationMainClass(applicationName);
+            }
+
+            List<JavaParser> parse = Lists.newArrayList();
+            for (String path : classPath) {
+                try {
+
+                    JavaParser parser = new JavaParser(path);
+                    parser.parse();
+                    parse.add(parser);
+
+                } catch (Exception e) {
+
+                }
+            }
+
+            JavaTestGenerator.generatorList(parse, testDirectory);
+
+            try {
+                ExcelTestGenerator.generatorList(parse, testDirectory);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if (!CollectionUtils.isEmpty(httpTestMap)) {
