@@ -1,18 +1,24 @@
 package com.zeratul.plugin.java;
 
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zeratul.plugin.util.TypeUtils;
-import japa.parser.ParseException;
-import japa.parser.ast.CompilationUnit;
-import japa.parser.ast.ImportDeclaration;
-import japa.parser.ast.PackageDeclaration;
-import japa.parser.ast.body.*;
-import japa.parser.ast.type.ClassOrInterfaceType;
-import japa.parser.ast.type.ReferenceType;
-import japa.parser.ast.visitor.VoidVisitorAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
+import org.springframework.util.CollectionUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,7 +66,7 @@ public class JavaParser {
         FileInputStream in = new FileInputStream(this.javaFile);
         CompilationUnit cu;
         try {
-            cu = japa.parser.JavaParser.parse(in);
+            cu = com.github.javaparser.JavaParser.parse(in);
         } finally {
             in.close();
         }
@@ -71,10 +77,10 @@ public class JavaParser {
         (new ClazzOrInterfaceVisitor()).visit(cu, (Object) null);
         (new JavaParser.MethodVisitor()).visit(cu, (Object) null);
         (new JavaParser.FieldVisitor()).visit(cu, cu);
-        Iterator iterator = this.warnInfo.iterator();
 
+        Iterator<String> iterator = this.warnInfo.iterator();
         while (iterator.hasNext()) {
-            String warn = (String) iterator.next();
+            String warn = iterator.next();
             System.err.println(warn);
         }
 
@@ -82,7 +88,6 @@ public class JavaParser {
             System.err.println("convertor产生致命错误,异常退出!!!!!!,比如存在import *.");
             System.exit(8);
         }
-
     }
 
     private void useParser(VelocityContext ctx, boolean isParent) {
@@ -114,11 +119,11 @@ public class JavaParser {
 
         public void visit(ClassOrInterfaceDeclaration n, Object arg) {
             boolean addInfo = false;
-            if (n.getExtends() != null) {
-                Iterator itr = n.getExtends().iterator();
+            if (n.getExtendedTypes() != null) {
+                Iterator<ClassOrInterfaceType> itr = n.getExtendedTypes().iterator();
 
                 while (itr.hasNext()) {
-                    String tmp = ((ClassOrInterfaceType) itr.next()).toString();
+                    String tmp = (itr.next()).toString();
                     if (!"BaseRequest".equals(tmp)) {
                         addInfo = true;
                     }
@@ -141,19 +146,19 @@ public class JavaParser {
 
         public void visit(MethodDeclaration n, Object arg) {
             Method method = new Method();
-            method.name = n.getName();
-            if (n.getParameters() != null) {
-                List comments = n.getParameters();
-                Iterator matcher = comments.iterator();
+            method.name = n.getName().getId();
+            if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getParameters()))) {
+                List<Parameter> comments = n.getParameters();
+                Iterator<Parameter> matcher = comments.iterator();
 
                 while (matcher.hasNext()) {
-                    Parameter parameter = (Parameter) matcher.next();
+                    Parameter parameter = matcher.next();
                     Field field = new Field();
-                    field.setName(parameter.getId().getName());
+                    field.setName(parameter.getName().getId());
                     field.setJavaType(TypeUtils.getTypeByName("java", parameter.getType()));
-                    if (parameter.getType() instanceof ReferenceType && ((ReferenceType) parameter.getType()).getType() instanceof ClassOrInterfaceType) {
-                        ClassOrInterfaceType trueType = (ClassOrInterfaceType) ((ReferenceType) parameter.getType()).getType();
-                        field.trueType = trueType.getName();
+                    if (parameter.getType() instanceof ReferenceType && (parameter.getType()).getElementType() instanceof ClassOrInterfaceType) {
+                        ClassOrInterfaceType trueType = (ClassOrInterfaceType) (parameter.getType()).getElementType();
+                        field.trueType = trueType.getName().getId();
                     }
 
                     field.setRequest(StringUtils.isNotEmpty(TypeUtils.getTypeByName("isrequst", parameter.getType())));
@@ -164,9 +169,9 @@ public class JavaParser {
                     method.parameters.add(new Pair(field, field.getName()));
                     if (TypeUtils.normalDtoDep(field.getJavaType())) {
                         if (TypeUtils.isList(field.getJavaType())) {
-                            JavaParser.this.model.depDtos.add(TypeUtils.getWarpType(field.getJavaType()));
+                            model.depDtos.add(TypeUtils.getWarpType(field.getJavaType()));
                         } else {
-                            JavaParser.this.model.depDtos.add(field.getJavaType());
+                            model.depDtos.add(field.getJavaType());
                         }
                     }
 
@@ -178,11 +183,11 @@ public class JavaParser {
                 method.parameters = null;
             }
 
-            this.handleResult(method, n);
-            if (n.getComment() != null) {
-                method.comments = n.getComment().getContent();
-            } else if (null != n.getJavaDoc()) {
-                method.comments = n.getJavaDoc().getContent();
+            handleResult(method, n);
+            if (n.getComment().isPresent()) {
+                method.comments = n.getComment().get().getContent();
+            } else if (n.getJavadoc().isPresent()) {
+                method.comments = n.getJavadoc().get().toComment().getContent();
             }
 
             if (StringUtils.isNotEmpty(method.getComments())) {
@@ -191,15 +196,15 @@ public class JavaParser {
                 method.comments = matcher1.replaceAll("");
             }
 
-            if (n.getModifiers() > 0) {
+            if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getModifiers()))) {
                 method.modifiers = n.getModifiers();
             }
 
-            if (n.getBody() != null) {
-                method.body = n.getBody().toString();
+            if (n.getBody().isPresent()) {
+                method.body = n.getBody().get().toString();
             }
 
-            JavaParser.this.model.methods.add(method);
+            model.methods.add(method);
         }
 
         private void handleResult(Method method, MethodDeclaration n) {
@@ -215,7 +220,7 @@ public class JavaParser {
                 }
 
                 if (!tmpType.startsWith("Map<")) {
-                    JavaParser.this.model.depDtos.add(tmpType);
+                    model.depDtos.add(tmpType);
                 }
             }
 
@@ -234,8 +239,8 @@ public class JavaParser {
         }
 
         public void visit(EnumDeclaration n, Object arg) {
-            JavaParser.this.model.isEnum = true;
-            JavaParser.this.warnInfo.add("the enum type of [ " + n.getName() + " ] is not recommended !!! Pls modify this API definition.");
+            model.isEnum = true;
+            warnInfo.add("the enum type of [ " + n.getName() + " ] is not recommended !!! Pls modify this API definition.");
         }
     }
 
@@ -246,13 +251,13 @@ public class JavaParser {
 
         public void visit(FieldDeclaration n, Object arg) {
             Field field = new Field();
-            if (n.getComment() != null) {
-                field.comment = n.getComment().getContent();
+            if (n.getComment().isPresent()) {
+                field.comment = n.getComment().get().getContent();
             }
 
             field.modifiers = n.getModifiers();
-            field.javaType = TypeUtils.getTypeByName("java", n.getType());
-            String wrapJType = TypeUtils.getTypeByName("wrapJType", n.getType());
+            field.javaType = TypeUtils.getTypeByName("java", n.getElementType());
+            String wrapJType = TypeUtils.getTypeByName("wrapJType", n.getElementType());
             if (StringUtils.isNotEmpty(wrapJType)) {
                 field.wrapJType = wrapJType;
             }
@@ -261,7 +266,7 @@ public class JavaParser {
             if (variables != null && variables.size() > 0) {
                 Iterator cu = variables.iterator();
 
-                for (VariableDeclarator variableDeclarator = null; cu.hasNext(); field.name = variableDeclarator.getId().getName()) {
+                for (VariableDeclarator variableDeclarator = null; cu.hasNext(); field.name = variableDeclarator.getName().getId()) {
                     variableDeclarator = (VariableDeclarator) cu.next();
                 }
             }
@@ -280,22 +285,22 @@ public class JavaParser {
                         field.enableCheck = false;
                     }
 
-                    JavaParser.this.model.depDtos.add(field.getJavaType());
+                    model.depDtos.add(field.getJavaType());
                 }
             }
 
             if (!StringUtils.equalsIgnoreCase("serialVersionUID", field.name)) {
-                JavaParser.this.model.fields.add(field);
+                model.fields.add(field);
             }
 
             CompilationUnit cu2 = (CompilationUnit) arg;
-            if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getType()), "Date")) {
+            if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getElementType()), "Date")) {
                 (new VoidVisitorAdapter() {
                     public void visit(ClassOrInterfaceDeclaration n, Object arg) {
                         JavaParser.this.addWarnInfo(n.getName() + " found Date !!");
                     }
                 }).visit(cu2, (Object) null);
-            } else if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getType()), "BigDecimal")) {
+            } else if (StringUtils.equalsIgnoreCase(TypeUtils.getTypeByName("java", n.getElementType()), "BigDecimal")) {
                 (new VoidVisitorAdapter() {
                     public void visit(ClassOrInterfaceDeclaration n, Object arg) {
                         JavaParser.this.addWarnInfo(n.getName() + " found BigDecimal !!");
@@ -311,33 +316,30 @@ public class JavaParser {
         }
 
         public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-            JavaParser.this.model.isInterfazz = n.isInterface();
-            JavaParser.this.model.className = n.getName();
-            if (n.getJavaDoc() != null) {
-                JavaParser.this.model.comments = n.getJavaDoc().toString();
+            model.isInterfazz = n.isInterface();
+            model.className = n.getName().getId();
+            if (n.getJavadoc().isPresent()) {
+                model.comments = n.getJavadoc().toString();
             }
 
-            if (JavaParser.this.model.comments != null) {
-                JavaParser.this.model.comments = n.getComment().getContent();
+            if (JavaParser.this.model.comments != null && n.getComment().isPresent()) {
+                model.comments = n.getComment().get().getContent();
             }
 
             Iterator<ClassOrInterfaceType> itr;
-            if (n.getExtends() != null) {
-                itr = n.getExtends().iterator();
-
+            if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getExtendedTypes()))) {
+                itr = n.getExtendedTypes().iterator();
                 while (itr.hasNext()) {
-                    JavaParser.this.model.parents.add((itr.next()).getName());
+                    JavaParser.this.model.parents.add((itr.next()).getName().getId());
                 }
             }
 
-            if (n.getImplements() != null) {
-                itr = n.getImplements().iterator();
-
+            if (Boolean.FALSE.equals(CollectionUtils.isEmpty(n.getImplementedTypes()))) {
+                itr = n.getExtendedTypes().iterator();
                 while (itr.hasNext()) {
-                    JavaParser.this.model.interfazzs.add((itr.next()).getName());
+                    JavaParser.this.model.interfazzs.add((itr.next()).getName().getId());
                 }
             }
-
         }
     }
 
@@ -351,8 +353,8 @@ public class JavaParser {
                 JavaParser.this.terminate = true;
             }
 
-            JavaParser.this.model.imports.add("\\" + StringUtils.replace(n.getName().toString(), ".", "\\"));
-            JavaParser.this.model.importsMap.put(n.getName().getName(), n.getName().toString());
+            model.imports.add("\\" + StringUtils.replace(n.getName().toString(), ".", "\\"));
+            model.importsMap.put(n.getName().getId(), n.getName().toString());
         }
     }
 
@@ -361,7 +363,7 @@ public class JavaParser {
         }
 
         public void visit(PackageDeclaration n, Object arg) {
-            JavaParser.this.model.packageName = n.getName().toString();
+            model.packageName = n.getName().toString();
         }
     }
 }

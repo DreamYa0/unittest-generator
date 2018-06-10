@@ -1,11 +1,12 @@
 package com.zeratul.plugin.util;
 
-import japa.parser.ast.type.ClassOrInterfaceType;
-import japa.parser.ast.type.PrimitiveType;
-import japa.parser.ast.type.ReferenceType;
-import japa.parser.ast.type.Type;
-import japa.parser.ast.type.VoidType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.VoidType;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author dreamyao
@@ -40,7 +41,7 @@ public class TypeUtils {
         return StringUtils.substring(type, start + 1, end);
     }
 
-    public static boolean isPrimitiveType(String type) {
+    private static boolean isPrimitiveType(String type) {
         boolean isPrimitiveType = false;
         if(StringUtils.equalsIgnoreCase(type, "Boolean")) {
             isPrimitiveType = true;
@@ -75,7 +76,7 @@ public class TypeUtils {
 
     private static String getReferenceTypeByName(String name, Type _type) {
         ReferenceType referenceType = (ReferenceType)_type;
-        Type _type2 = referenceType.getType();
+        Type _type2 = referenceType.getElementType();
         return _type2 instanceof ClassOrInterfaceType?getClassOrInterfaceTypeByName(name, _type2):(_type2 instanceof PrimitiveType?getPrimitiveTypeByName(name, _type2):"");
     }
 
@@ -85,7 +86,7 @@ public class TypeUtils {
         String wrapJType = "";
         String isRequest = "";
         ClassOrInterfaceType classOrInterfaceType = (ClassOrInterfaceType)_type;
-        String type = classOrInterfaceType.getName();
+        String type = classOrInterfaceType.getName().getId();
         if(StringUtils.equalsIgnoreCase(type, "Byte")) {
             phpType = "int";
             javaType = "Byte";
@@ -122,9 +123,9 @@ public class TypeUtils {
             if(StringUtils.equalsIgnoreCase(type, "List")) {
                 jType = "";
                 pType = "";
-                if(classOrInterfaceType.getTypeArgs() != null && !classOrInterfaceType.getTypeArgs().isEmpty()) {
-                    jType = getTypeByName("java", (Type)classOrInterfaceType.getTypeArgs().get(0));
-                    pType = getTypeByName("php", (Type)classOrInterfaceType.getTypeArgs().get(0));
+                if(classOrInterfaceType.getTypeArguments().isPresent()&&Boolean.FALSE.equals(CollectionUtils.isEmpty(classOrInterfaceType.getTypeArguments().get()))) {
+                    jType = getTypeByName("java", classOrInterfaceType.getTypeArguments().get().get(0));
+                    pType = getTypeByName("php", classOrInterfaceType.getTypeArguments().get().get(0));
                 }
 
                 if(StringUtils.isEmpty(pType)) {
@@ -142,11 +143,11 @@ public class TypeUtils {
                 pType = "";
                 String j2Type = "";
                 String p2Type = "";
-                if(classOrInterfaceType.getTypeArgs() != null && !classOrInterfaceType.getTypeArgs().isEmpty()) {
-                    jType = getTypeByName("java", (Type)classOrInterfaceType.getTypeArgs().get(0));
-                    pType = getTypeByName("php", (Type)classOrInterfaceType.getTypeArgs().get(0));
-                    j2Type = getTypeByName("java", (Type)classOrInterfaceType.getTypeArgs().get(1));
-                    p2Type = getTypeByName("php", (Type)classOrInterfaceType.getTypeArgs().get(1));
+                if(classOrInterfaceType.getTypeArguments().isPresent()&&Boolean.FALSE.equals(CollectionUtils.isEmpty(classOrInterfaceType.getTypeArguments().get()))) {
+                    jType = getTypeByName("java", classOrInterfaceType.getTypeArguments().get().get(0));
+                    pType = getTypeByName("php", classOrInterfaceType.getTypeArguments().get().get(0));
+                    j2Type = getTypeByName("java", classOrInterfaceType.getTypeArguments().get().get(1));
+                    p2Type = getTypeByName("php", classOrInterfaceType.getTypeArguments().get().get(1));
                 }
 
                 phpType = "array[" + pType + "," + p2Type + "]";
@@ -154,9 +155,9 @@ public class TypeUtils {
             } else if(StringUtils.equalsIgnoreCase(type, "Request")) {
                 jType = "";
                 pType = "";
-                if(classOrInterfaceType.getTypeArgs() != null && !classOrInterfaceType.getTypeArgs().isEmpty()) {
-                    jType = getTypeByName("java", (Type)classOrInterfaceType.getTypeArgs().get(0));
-                    pType = getTypeByName("php", (Type)classOrInterfaceType.getTypeArgs().get(0));
+                if(classOrInterfaceType.getTypeArguments().isPresent()&&Boolean.FALSE.equals(CollectionUtils.isEmpty(classOrInterfaceType.getTypeArguments().get()))) {
+                    jType = getTypeByName("java", classOrInterfaceType.getTypeArguments().get().get(0));
+                    pType = getTypeByName("php", classOrInterfaceType.getTypeArguments().get().get(0));
                 }
 
                 javaType = jType;
@@ -165,9 +166,9 @@ public class TypeUtils {
             } else if(StringUtils.equalsIgnoreCase(type, "Result")) {
                 jType = "";
                 pType = "";
-                if(classOrInterfaceType.getTypeArgs() != null && !classOrInterfaceType.getTypeArgs().isEmpty()) {
-                    jType = getTypeByName("java", (Type)classOrInterfaceType.getTypeArgs().get(0));
-                    pType = getTypeByName("php", (Type)classOrInterfaceType.getTypeArgs().get(0));
+                if(classOrInterfaceType.getTypeArguments().isPresent()&&Boolean.FALSE.equals(CollectionUtils.isEmpty(classOrInterfaceType.getTypeArguments().get()))) {
+                    jType = getTypeByName("java", classOrInterfaceType.getTypeArguments().get().get(0));
+                    pType = getTypeByName("php", classOrInterfaceType.getTypeArguments().get().get(0));
                 }
 
                 javaType = jType;

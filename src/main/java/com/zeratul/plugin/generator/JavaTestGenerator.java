@@ -1,5 +1,6 @@
 package com.zeratul.plugin.generator;
 
+import com.github.javaparser.ast.Modifier;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.zeratul.plugin.java.Field;
@@ -17,9 +18,9 @@ import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author dreamyao
@@ -67,17 +68,26 @@ public class JavaTestGenerator {
         Iterator<Method> iterator = model.methods.iterator();
         while(iterator.hasNext()) {
             Method method = iterator.next();
-            if(Modifier.isPublic(method.modifiers)){
-                String fileName = "Test" + StringUtils.toUpperCaseFirstOne(method.getName());
-                String genFilePath = basePath + File.separator + model.className.toLowerCase() + File.separator;
-                ctx.put("clazz", fileName);
 
-                try {
-                    FileUtils.writeFile(t, ctx, genFilePath, fileName + ".java");
-                } catch (IOException e) {
-                    e.printStackTrace();
+            Iterator<Modifier> modifierIte = method.modifiers.iterator();
+            while (modifierIte.hasNext()) {
+                Modifier modifier = modifierIte.next();
+
+                // public方法才生成测试用例
+                if(Objects.equals(modifier,com.github.javaparser.ast.Modifier.PUBLIC)){
+                    String fileName = "Test" + StringUtils.toUpperCaseFirstOne(method.getName());
+                    String genFilePath = basePath + File.separator + model.className.toLowerCase() + File.separator;
+                    ctx.put("clazz", fileName);
+
+                    try {
+                        FileUtils.writeFile(t, ctx, genFilePath, fileName + ".java");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
+
+
         }
     }
 

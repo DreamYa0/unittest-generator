@@ -1,5 +1,8 @@
 package com.zeratul.plugin.java;
 
+import com.github.javaparser.ast.Modifier;
+
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -15,7 +18,7 @@ public class Method {
     public boolean isGeneric;
     public String gennericType;
     public String comments;
-    public int modifiers;
+    public EnumSet<Modifier> modifiers;
     public String body;
     public Field result;
     private String hessian;
@@ -53,7 +56,7 @@ public class Method {
         sb.append(", parameters=").append(this.parameters);
         sb.append(", result=").append(this.result);
         sb.append(", comments=\'").append(this.comments).append('\'');
-        sb.append(", modifiers=").append(this.modifiers);
+        sb.append(", modifiers=").append(this.modifiers.toString());
         sb.append(", body=\'").append(this.body).append('\'');
         sb.append('}');
         return sb.toString();

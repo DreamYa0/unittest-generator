@@ -51,9 +51,9 @@
         </dependency>
         <!-- javaParser -->
         <dependency>
-            <groupId>com.google.code.javaparser</groupId>
-            <artifactId>javaparser</artifactId>
-            <version>1.0.11</version>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.6.8</version>
         </dependency>
 
         <dependency>

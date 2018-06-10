@@ -1,5 +1,9 @@
 package com.zeratul.plugin.java;
 
+import com.github.javaparser.ast.Modifier;
+
+import java.util.EnumSet;
+
 /**
  * @author dreamyao
  * @title
@@ -9,7 +13,7 @@ package com.zeratul.plugin.java;
 public class Field {
 
     public String name;
-    public int modifiers;
+    public EnumSet<Modifier> modifiers;
     public String phpTypeWithNoBracket;
     public String javaType;
     public String wrapJType;
@@ -36,14 +40,6 @@ public class Field {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getModifiers() {
-        return modifiers;
-    }
-
-    public void setModifiers(int modifiers) {
-        this.modifiers = modifiers;
     }
 
     public String getPhpTypeWithNoBracket() {
@@ -122,7 +118,7 @@ public class Field {
     public String toString() {
         return "Field{" +
                 "name='" + name + '\'' +
-                ", modifiers=" + modifiers +
+                ", modifiers=" + modifiers.toString() +
                 ", phpTypeWithNoBracket='" + phpTypeWithNoBracket + '\'' +
                 ", javaType='" + javaType + '\'' +
                 ", wrapJType='" + wrapJType + '\'' +
