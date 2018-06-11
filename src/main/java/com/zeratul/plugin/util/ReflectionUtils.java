@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,11 +49,17 @@ public final class ReflectionUtils {
      * @param fields Field对象
      */
     public static void getAllFields(Class clazz, List<Field> fields) {
-        if (clazz == null || fields == null || clazz == Object.class)
-            return;
-        Field[] fs = clazz.getDeclaredFields();
-        fields.addAll(Lists.newArrayList(fs));
-        getAllFields(clazz.getSuperclass(), fields);
+        if(clazz != null && fields != null && clazz != Object.class) {
+            Field[] fs = clazz.getDeclaredFields();
+            for(int i = 0; i < fs.length; ++i) {
+                Field field = fs[i];
+                if(!Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers())) {
+                    fields.add(field);
+                }
+            }
+
+            getAllFields(clazz.getSuperclass(), fields);
+        }
     }
 
     /**

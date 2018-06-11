@@ -9,11 +9,15 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,6 +71,8 @@ public class TestCaseGenerator extends AbstractMojo {
     @Parameter
     private String applicationName;
 
+    private MavenProject project;
+
     public static void main(String[] args) {
         // HttpGenerator.createRestApiCase("TestPages", "unittest");
         HttpGenerator.createHttpApiCase("TestPagesHttp", "unittest");
@@ -74,6 +80,11 @@ public class TestCaseGenerator extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Assert.notNull(testDirectory, "Test Directory is not null");
+
+        ClassLoader classLoader = getClassLoader();
+        if (Objects.nonNull(classLoader)) {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
 
         if (!StringUtils.isEmpty(classDirectory)) {
             List<JavaParser> parse = JavaParseUtil.parse(classDirectory);
@@ -130,5 +141,28 @@ public class TestCaseGenerator extends AbstractMojo {
         }
 
         getLog().info("testDirectory:" + testDirectory);
+    }
+
+    private ClassLoader getClassLoader() throws MojoExecutionException {
+        if (Objects.nonNull(project)) {
+            try {
+                List<String> e = this.project.getRuntimeClasspathElements();
+                List<String> classpathElements = this.project.getCompileClasspathElements();
+                classpathElements.add(this.project.getBuild().getOutputDirectory());
+                classpathElements.add(this.project.getBuild().getTestOutputDirectory());
+                classpathElements.addAll(e);
+                URL[] urls = new URL[classpathElements.size()];
+
+                for(int i = 0; i < classpathElements.size(); ++i) {
+                    String path = classpathElements.get(i);
+                    urls[i] = (new File(path)).toURI().toURL();
+                }
+
+                return new URLClassLoader(urls, this.getClass().getClassLoader());
+            } catch (Exception var6) {
+                throw new MojoExecutionException("Couldn\'t create a classloader.", var6);
+            }
+        }
+        return null;
     }
 }

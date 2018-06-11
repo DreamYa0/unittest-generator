@@ -18,7 +18,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.servlet.http.HttpServletRequest;
@@ -141,22 +140,23 @@ public class JavaTestGenerator {
 
                                     // 泛型中的类型参数，如Request<T> 中的 T
                                     if (genericType instanceof TypeVariable) {
-                                        Map<String, Object> paramsFromType = getParamsFromType(dtoClass);
+                                        /*Map<String, Object> paramsFromType = getParamsFromType(dtoClass);
                                         if (Boolean.FALSE.equals(CollectionUtils.isEmpty(paramsFromType))) {
                                             paramList.addAll(paramsFromType.keySet());
-                                        }
+                                        }*/
 
                                     } else if (genericType instanceof Class) {
 
                                         // Class类型
                                         List<java.lang.reflect.Field> allFields = ReflectionUtils.getAllFieldsList((Class<?>) genericType);
-                                        List<String> collect = allFields.stream().map(allField -> {
+                                        List<String> collect = allFields.stream()
+                                                .map(allField -> {
                                             if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
                                                 return allField.getName();
                                             } else {
                                                 return null;
                                             }
-                                        }).collect(Collectors.toList());
+                                        }).filter(Objects::nonNull).collect(Collectors.toList());
 
                                         paramList.addAll(collect);
                                     } else {
@@ -181,6 +181,8 @@ public class JavaTestGenerator {
     }
 
     private static Map<String, Object> getParamsFromType(Type type) {
+
+        // type 为Request<T>
         if (type instanceof ParameterizedTypeImpl) {
             ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
             Type[] dataTypes = parameterizedType.getActualTypeArguments();
@@ -190,6 +192,7 @@ public class JavaTestGenerator {
             }
 
         } else if (type instanceof Class) {
+            // type 为Request<T> 中的 T
             Class clazz = (Class) type;
             return getParamsFromClass(clazz);
         } else {
@@ -199,7 +202,7 @@ public class JavaTestGenerator {
     }
 
     private static Map<String, Object> getParamsFromClass(Class clazz) {
-        //如果入参为Request<Integer>,Request<String>
+        //如果入参为Request<Integer>,Request<String>, T 为基本类型
         if (StringUtils.isBasicType(clazz)) {
             return Maps.newHashMap();
         }
