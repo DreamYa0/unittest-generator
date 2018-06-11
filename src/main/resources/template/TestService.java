@@ -7,14 +7,14 @@ import java.util.Map;
 
 //import
 
-public class Test$methodName extends Base$serviceNameTest<$serviceName> {
+public class Test$methodName extends Base$serviceNameTest<$serviceName>{
 
     /**
      * db初始化,此方法中初始化的数据无法自动回滚
      */
     @BeforeClass
     @Override
-    public void initDb() {
+    public void initDb(){
 
     }
 
@@ -27,5 +27,5 @@ public class Test$methodName extends Base$serviceNameTest<$serviceName> {
 
     }
 
-    //TestNg
+	//TestNg
 }
