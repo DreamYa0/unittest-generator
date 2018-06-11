@@ -3,6 +3,7 @@ package com.zeratul.plugin.generator;
 import com.github.javaparser.ast.Modifier;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.zeratul.plugin.java.Field;
 import com.zeratul.plugin.java.JavaAstModel;
 import com.zeratul.plugin.java.Method;
@@ -15,12 +16,24 @@ import com.zeratul.plugin.util.VelocityUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author dreamyao
@@ -30,6 +43,7 @@ import java.util.Objects;
  */
 public class JavaTestGenerator {
 
+    private static final Logger logger = LoggerFactory.getLogger(JavaTestGenerator.class);
     private static String applicationName;
 
     public static void generatorList(List<JavaParser> javas, String path) {
@@ -97,26 +111,63 @@ public class JavaTestGenerator {
         try {
             // Request<XXX> XXX为基本类型时，
             String basicParam = "data";
-            Iterator iterator = method.getParam().iterator();
+            Iterator<Pair<Field, String>> iterator = method.getParam().iterator();
 
             while (true) {
                 while (iterator.hasNext()) {
-                    Pair pair = (Pair) iterator.next();
-                    String paramName = (String) pair.getValue();
-                    Field field = (Field) pair.getKey();
+                    Pair<Field,String> pair = iterator.next();
+                    String paramName = pair.getValue();
+                    Field field =  pair.getKey();
                     if (field.isRequest && StringUtils.isBasicType(field.getJavaType())) {
                         paramList.add(basicParam);
                     } else if (model.importsMap.containsKey(field.getJavaType())) {
                         String className = model.importsMap.get(field.getJavaType());
-                        Class dtoClass = loadClass(className);
-                        List<java.lang.reflect.Field> fields = Lists.newArrayList();
-                        ReflectionUtils.getAllFields(dtoClass, fields);
-                        Iterator fieldIterator = fields.iterator();
 
-                        while (fieldIterator.hasNext()) {
-                            java.lang.reflect.Field f = (java.lang.reflect.Field) fieldIterator.next();
-                            paramList.add(f.getName());
+
+                        // Request<XXXX>
+                        Class dtoClass = loadClass(className);
+                        if (noSprigInterface(dtoClass)) {
+
+                            List<java.lang.reflect.Field> fields = Lists.newArrayList();
+                            ReflectionUtils.getAllFields(dtoClass, fields);
+                            Iterator<java.lang.reflect.Field> fieldIterator = fields.iterator();
+
+                            while (fieldIterator.hasNext()) {
+
+                                java.lang.reflect.Field f = fieldIterator.next();
+                                Type genericType = f.getGenericType();
+                                String fieldName = f.getName();
+                                if (Boolean.FALSE.equals(Objects.equals(fieldName, "serialVersionUID"))) {
+
+                                    // 泛型中的类型参数，如Request<T> 中的 T
+                                    if (genericType instanceof TypeVariable) {
+                                        Map<String, Object> paramsFromType = getParamsFromType(dtoClass);
+                                        if (Boolean.FALSE.equals(CollectionUtils.isEmpty(paramsFromType))) {
+                                            paramList.addAll(paramsFromType.keySet());
+                                        }
+
+                                    } else if (genericType instanceof Class) {
+
+                                        // Class类型
+                                        List<java.lang.reflect.Field> allFields = ReflectionUtils.getAllFieldsList((Class<?>) genericType);
+                                        List<String> collect = allFields.stream().map(allField -> {
+                                            if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
+                                                return allField.getName();
+                                            } else {
+                                                return null;
+                                            }
+                                        }).collect(Collectors.toList());
+
+                                        paramList.addAll(collect);
+                                    } else {
+                                        // 基本类型
+                                        paramList.add(fieldName);
+                                    }
+                                }
+                            }
+
                         }
+
                     } else {
                         paramList.add(paramName);
                     }
@@ -128,6 +179,51 @@ public class JavaTestGenerator {
             return null;
         }
     }
+
+    private static Map<String, Object> getParamsFromType(Type type) {
+        if (type instanceof ParameterizedTypeImpl) {
+            ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
+            Type[] dataTypes = parameterizedType.getActualTypeArguments();
+
+            for (Type dataType : dataTypes) {
+                return getParamsFromType(dataType);
+            }
+
+        } else if (type instanceof Class) {
+            Class clazz = (Class) type;
+            return getParamsFromClass(clazz);
+        } else {
+
+        }
+        return Maps.newHashMap();
+    }
+
+    private static Map<String, Object> getParamsFromClass(Class clazz) {
+        //如果入参为Request<Integer>,Request<String>
+        if (StringUtils.isBasicType(clazz)) {
+            return Maps.newHashMap();
+        }
+        Map<String, Object> maps = Maps.newHashMap();
+        java.lang.reflect.Field[] fields = clazz.getDeclaredFields();
+        for (java.lang.reflect.Field field : fields) {
+
+            if (StringUtils.isBasicType(field.getType()) || field.getGenericType() instanceof ParameterizedType) {
+                maps.put(field.getName(), null);
+            } else if (field.getGenericType() instanceof Class) {
+                //遇到对象，则只生成这个对象字段，不生成对象中值的字段
+                maps.put(field.getName(), null);
+            } else {
+                logger.error("-------------获取生成excel入参字段异常！---------------");
+            }
+
+        }
+        return maps;
+    }
+
+    private static boolean noSprigInterface(Type type) {
+        return Boolean.FALSE.equals(type instanceof HttpSession) && Boolean.FALSE.equals(type instanceof HttpServletRequest) && Boolean.FALSE.equals(type instanceof HttpServletResponse);
+    }
+
 
     private static Class loadClass(String className) throws ClassNotFoundException {
         return Thread.currentThread().getContextClassLoader().loadClass(className);
