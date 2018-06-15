@@ -114,19 +114,26 @@ public class JavaTestGenerator {
 
             while (true) {
                 while (iterator.hasNext()) {
-                    Pair<Field,String> pair = iterator.next();
+                    Pair<Field, String> pair = iterator.next();
                     String paramName = pair.getValue();
-                    Field field =  pair.getKey();
+                    Field field = pair.getKey();
                     if (field.isRequest && StringUtils.isBasicType(field.getJavaType())) {
+
                         paramList.add(basicParam);
+
                     } else if (model.importsMap.containsKey(field.getJavaType())) {
+
                         String className = model.importsMap.get(field.getJavaType());
 
-
-                        // Request<XXXX>
                         Class dtoClass = loadClass(className);
-                        if (noSprigInterface(dtoClass)) {
 
+                        if (StringUtils.isBasicType(dtoClass)) {
+                            // 基本类型或包装器类型
+                            paramList.add(paramName);
+
+                        } else if (noSprigInterface(dtoClass)) {
+
+                            // 自定义对象或者 如 Request<T> 类似的泛型
                             List<java.lang.reflect.Field> fields = Lists.newArrayList();
                             ReflectionUtils.getAllFields(dtoClass, fields);
                             Iterator<java.lang.reflect.Field> fieldIterator = fields.iterator();
@@ -151,12 +158,12 @@ public class JavaTestGenerator {
                                         List<java.lang.reflect.Field> allFields = ReflectionUtils.getAllFieldsList((Class<?>) genericType);
                                         List<String> collect = allFields.stream()
                                                 .map(allField -> {
-                                            if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
-                                                return allField.getName();
-                                            } else {
-                                                return null;
-                                            }
-                                        }).filter(Objects::nonNull).collect(Collectors.toList());
+                                                    if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
+                                                        return allField.getName();
+                                                    } else {
+                                                        return null;
+                                                    }
+                                                }).filter(Objects::nonNull).collect(Collectors.toList());
 
                                         paramList.addAll(collect);
                                     } else {
