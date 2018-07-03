@@ -211,20 +211,20 @@ public class JavaTestGenerator {
                 }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    private static Map<String, Object> getParamsFromType(Type type) {
+    private static Map<String, Object> getParamsFromType(Type requestType) {
 
-        // type 为Request<T>
-        if (type instanceof ParameterizedTypeImpl) {
-            ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) type;
+        // requestType 为Request<T>
+        if (requestType instanceof ParameterizedTypeImpl) {
+            ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) requestType;
             Type[] dataTypes = parameterizedType.getActualTypeArguments();
 
             for (Type dataType : dataTypes) {
                 return getParamsFromType(dataType);
             }
 
-        } else if (type instanceof Class) {
-            // type 为Request<T> 中的 T
-            Class clazz = (Class) type;
+        } else if (requestType instanceof Class) {
+            // requestType 为Request<T> 中的 T
+            Class clazz = (Class) requestType;
             return getParamsFromClass(clazz);
         } else {
 

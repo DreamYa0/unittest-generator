@@ -47,7 +47,7 @@ public class GenerateExcel {
         while (it.hasNext()) {
             String param = it.next();
             Object obj = maps.get(param);
-            if (obj != null && obj instanceof Map) {
+            if (obj instanceof Map) {
                 i = writeObjectToSheet(i, (Map) obj, sheet, param, method);
             } else if (obj == null) {
                 if (prefix == null) {
