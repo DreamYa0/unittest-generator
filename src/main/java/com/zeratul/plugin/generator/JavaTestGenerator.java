@@ -13,12 +13,13 @@ import com.zeratul.plugin.util.FileUtils;
 import com.zeratul.plugin.util.ReflectionUtils;
 import com.zeratul.plugin.util.StringUtils;
 import com.zeratul.plugin.util.VelocityUtils;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -155,10 +156,17 @@ public class JavaTestGenerator {
 
                                     // 泛型中的类型参数，如Request<T> 中的 T
                                     if (genericType instanceof TypeVariable) {
-                                        /*Map<String, Object> paramsFromType = getParamsFromType(dtoClass);
+
+                                        TypeVariable[] typeParameters = dtoClass.getTypeParameters();
+                                        ParameterizedType parameterize = TypeUtils.parameterize(dtoClass,typeParameters);
+
+
+                                        Map<String, Object> paramsFromType = getParamsFromType(parameterize);
                                         if (Boolean.FALSE.equals(CollectionUtils.isEmpty(paramsFromType))) {
                                             paramList.addAll(paramsFromType.keySet());
-                                        }*/
+                                        }
+
+
 
                                     } else if (genericType instanceof Class) {
 
@@ -214,8 +222,8 @@ public class JavaTestGenerator {
     private static Map<String, Object> getParamsFromType(Type requestType) {
 
         // requestType 为Request<T>
-        if (requestType instanceof ParameterizedTypeImpl) {
-            ParameterizedTypeImpl parameterizedType = (ParameterizedTypeImpl) requestType;
+        if (requestType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) requestType;
             Type[] dataTypes = parameterizedType.getActualTypeArguments();
 
             for (Type dataType : dataTypes) {
