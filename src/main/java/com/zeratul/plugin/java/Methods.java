@@ -1,5 +1,7 @@
 package com.zeratul.plugin.java;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -154,11 +156,12 @@ public class Methods implements Serializable {
 
     @Override
     public String toString() {
-        return "Methods{" +
-                "id=" + getId() +
-                ", methodName='" + getMethodName() + "'" +
-                ", methodDesc='" + getMethodDesc() + "'" +
-                ", methodURL='" + getMethodURL() + "'" +
-                "}";
+
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", getId())
+                .add("methodName", getMethodName())
+                .add("methodDesc", getMethodDesc())
+                .add("methodURL", getMethodURL()).toString();
     }
 }

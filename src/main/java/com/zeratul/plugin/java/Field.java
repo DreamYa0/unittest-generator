@@ -1,6 +1,7 @@
 package com.zeratul.plugin.java;
 
 import com.github.javaparser.ast.Modifier;
+import com.google.common.base.MoreObjects;
 
 import java.util.EnumSet;
 
@@ -116,18 +117,17 @@ public class Field {
 
     @Override
     public String toString() {
-        return "Field{" +
-                "name='" + name + '\'' +
-                ", modifiers=" + modifiers.toString() +
-                ", phpTypeWithNoBracket='" + phpTypeWithNoBracket + '\'' +
-                ", javaType='" + javaType + '\'' +
-                ", wrapJType='" + wrapJType + '\'' +
-                ", comment='" + comment + '\'' +
-                ", isRequest=" + isRequest +
-                ", enableResult=" + enableResult +
-                ", enableCheck=" + enableCheck +
-                ", isGeneric=" + isGeneric +
-                ", trueType='" + trueType + '\'' +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("name", name)
+                .add("modifiers", modifiers)
+                .add("phpTypeWithNoBracket", phpTypeWithNoBracket)
+                .add("javaType", javaType)
+                .add("wrapJType", wrapJType)
+                .add("comment", comment)
+                .add("isRequest", isRequest)
+                .add("enableResult", enableResult)
+                .add("isGeneric", isGeneric)
+                .add("trueType", trueType).toString();
     }
 }

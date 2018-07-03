@@ -25,7 +25,9 @@ import org.apache.velocity.VelocityContext;
 import org.springframework.util.CollectionUtils;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +69,12 @@ public class JavaParser {
 
     public void parse() throws IOException, ParseException {
 
-        FileInputStream in = new FileInputStream(javaFile);
+        InputStream in;
+        try {
+            in = new FileInputStream(javaFile);
+        } catch (FileNotFoundException e) {
+            in = JavaParser.class.getClassLoader().getResourceAsStream(javaFile);
+        }
         CompilationUnit cu;
         try {
             cu = com.github.javaparser.JavaParser.parse(in);

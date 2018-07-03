@@ -1,6 +1,7 @@
 package com.zeratul.plugin.java;
 
 import com.github.javaparser.ast.Modifier;
+import com.google.common.base.MoreObjects;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -51,14 +52,14 @@ public class Method {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("Method{");
-        sb.append("name=\'").append(this.name).append('\'');
-        sb.append(", parameters=").append(this.parameters);
-        sb.append(", result=").append(this.result);
-        sb.append(", comments=\'").append(this.comments).append('\'');
-        sb.append(", modifiers=").append(this.modifiers.toString());
-        sb.append(", body=\'").append(this.body).append('\'');
-        sb.append('}');
-        return sb.toString();
+
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("name", name)
+                .add("parameters", parameters)
+                .add("result", result)
+                .add("comments", comments)
+                .add("modifiers", modifiers)
+                .add("body", body).toString();
     }
 }

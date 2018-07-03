@@ -80,6 +80,7 @@ public class TestCaseGenerator extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Assert.notNull(testDirectory, "Test Directory is not null");
+        JavaTestGenerator.setPath(testDirectory);
 
         ClassLoader classLoader = getClassLoader();
         if (Objects.nonNull(classLoader)) {

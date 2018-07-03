@@ -44,6 +44,7 @@ public class JavaTestGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaTestGenerator.class);
     private static String applicationName;
+    private static volatile String path;
 
     public static void generatorList(List<JavaParser> javas, String path) {
         Iterator<JavaParser> iterator = javas.iterator();
@@ -124,14 +125,21 @@ public class JavaTestGenerator {
                     } else if (model.importsMap.containsKey(field.getJavaType())) {
 
                         String className = model.importsMap.get(field.getJavaType());
+                        if (isContainsServletObject(className)) {
+                            continue;
+                        }
 
-                        Class dtoClass = loadClass(className);
+                        Class dtoClass;
+                        try {
+                            dtoClass = loadClass(className);
+                        } catch (ClassNotFoundException e) {
+                            // 获取类的属性名称
+                            return obtainFieldNames(className);
+                        }
 
-                        if (StringUtils.isBasicType(dtoClass)) {
-                            // 基本类型或包装器类型
-                            paramList.add(paramName);
+                        addBasicTypeParamName(dtoClass, paramName, paramList);
 
-                        } else if (noSprigInterface(dtoClass)) {
+                        if (noSprigInterface(dtoClass)) {
 
                             // 自定义对象或者 如 Request<T> 类似的泛型
                             List<java.lang.reflect.Field> fields = Lists.newArrayList();
@@ -156,14 +164,7 @@ public class JavaTestGenerator {
 
                                         // Class类型
                                         List<java.lang.reflect.Field> allFields = ReflectionUtils.getAllFieldsList((Class<?>) genericType);
-                                        List<String> collect = allFields.stream()
-                                                .map(allField -> {
-                                                    if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
-                                                        return allField.getName();
-                                                    } else {
-                                                        return null;
-                                                    }
-                                                }).filter(Objects::nonNull).collect(Collectors.toList());
+                                        List<String> collect = filterAndTransformFields(allFields);
 
                                         paramList.addAll(collect);
                                     } else {
@@ -185,6 +186,29 @@ public class JavaTestGenerator {
         } catch (Exception var12) {
             return null;
         }
+    }
+
+    private static boolean isContainsServletObject(String className) {
+        return className.contains("HttpServletRequest") || className.contains("HttpServletResponse") || className.contains("HttpSession");
+    }
+
+    private static void addBasicTypeParamName(Class clazz, String paramName, List<String> paramNames) {
+        if (StringUtils.isBasicType(clazz)) {
+            // 基本类型或包装器类型
+            paramNames.add(paramName);
+            return;
+        }
+    }
+
+    private static List<String> filterAndTransformFields(List<java.lang.reflect.Field> fields) {
+        return fields.stream()
+                .map(allField -> {
+                    if (Boolean.FALSE.equals(Objects.equals(allField.getName(), "serialVersionUID"))) {
+                        return allField.getName();
+                    } else {
+                        return null;
+                    }
+                }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private static Map<String, Object> getParamsFromType(Type type) {
@@ -236,10 +260,59 @@ public class JavaTestGenerator {
 
 
     private static Class loadClass(String className) throws ClassNotFoundException {
-        return Thread.currentThread().getContextClassLoader().loadClass(className);
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException ex) {
+                try {
+                    return ClassLoader.getSystemClassLoader().loadClass(className);
+                } catch (ClassNotFoundException exc) {
+                    try {
+                        return JavaTestGenerator.class.getClassLoader().loadClass(className);
+                    } catch (ClassNotFoundException exce) {
+                        return ClassLoader.getSystemClassLoader().getParent().loadClass(className);
+                    }
+                }
+            }
+        }
     }
 
     public static void setSpringBootApplicationMainClass(String applicationName) {
         JavaTestGenerator.applicationName = applicationName;
+    }
+
+    public static void setPath(String path) {
+        JavaTestGenerator.path = path;
+    }
+
+    private static String spliceFullClassPath(String className) {
+
+        String currentPath = path;
+        if (currentPath.contains("/") && currentPath.contains("/src/test")) {
+            String newCurrentPath = currentPath.replace("/src/test", "/src/main/java/");
+            String newClassName = className.replace(".", "/");
+            return newCurrentPath + newClassName + ".java";
+        } else if (currentPath.contains("\\") && currentPath.contains("\\src\\test")) {
+            String newCurrentPath = currentPath.replace("\\src\\test", "\\src\\main\\java\\");
+            String newClassName = className.replace(".", "\\");
+            return newCurrentPath + newClassName + ".java";
+        }
+        throw new RuntimeException("生成测试包路径错误！");
+    }
+
+    private static List<String> obtainFieldNames(String className) {
+
+        try {
+            String fullClassPath = spliceFullClassPath(className);
+            JavaParser parser = new JavaParser(fullClassPath);
+            parser.parse();
+            JavaAstModel astModel = parser.getModel();
+            return astModel.fields.stream().map(field -> field.name).collect(Collectors.toList());
+        } catch (Exception e) {
+
+        }
+        return Lists.newArrayList();
     }
 }

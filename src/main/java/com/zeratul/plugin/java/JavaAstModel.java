@@ -1,5 +1,6 @@
 package com.zeratul.plugin.java;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -33,16 +34,16 @@ public class JavaAstModel {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("JavaAstModel{");
-        sb.append("packageName=\'").append(this.packageName).append('\'');
-        sb.append(", isInterfazz=").append(this.isInterfazz);
-        sb.append(", className=\'").append(this.className).append('\'');
-        sb.append(", comments=\'").append(this.comments).append('\'');
-        sb.append(", parents=").append(this.parents);
-        sb.append(", interfazzs=").append(this.interfazzs);
-        sb.append(", fields=").append(this.fields);
-        sb.append(", methods=").append(this.methods);
-        sb.append('}');
-        return sb.toString();
+
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("packageName", packageName)
+                .add("isInterfazz", isInterfazz)
+                .add("className", className)
+                .add("comments", comments)
+                .add("parents", parents)
+                .add("interfazzs", interfazzs)
+                .add("fields", fields)
+                .add("methods", methods).toString();
     }
 }

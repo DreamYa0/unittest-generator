@@ -1,5 +1,7 @@
 package com.zeratul.plugin.java;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -133,13 +135,15 @@ public class RequestParameters implements Serializable {
 
     @Override
     public String toString() {
-        return "RequestParameters{" +
-                "id=" + getId() +
-                ", parameterName='" + getParameterName() + "'" +
-                ", parameterType='" + getParameterType() + "'" +
-                ", parameterValue='" + getParameterValue() + "'" +
-                ", parameterDesc='" + getParameterDesc() + "'" +
-                ", parameterRequired='" + isParameterRequired() + "'" +
-                "}";
+
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", getId())
+                .add("parameterName", getParameterName())
+                .add("parameterType", getParameterType())
+                .add("parameterValue", getParameterValue())
+                .add("parameterDesc", getParameterDesc())
+                .add("parameterRequired", isParameterRequired())
+                .toString();
     }
 }
