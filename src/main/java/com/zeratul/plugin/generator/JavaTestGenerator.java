@@ -119,7 +119,7 @@ public class JavaTestGenerator {
                     Pair<Field, String> pair = iterator.next();
                     String paramName = pair.getValue();
                     Field field = pair.getKey();
-                    if (field.isRequest && StringUtils.isBasicType(field.getJavaType())) {
+                    if (StringUtils.isBasicType(field.getJavaType())) {
 
                         paramList.add(basicParam);
 
