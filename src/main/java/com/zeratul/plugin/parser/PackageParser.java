@@ -1,6 +1,6 @@
 package com.zeratul.plugin.parser;
 
-import com.google.inject.internal.util.Lists;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;

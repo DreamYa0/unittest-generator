@@ -14,14 +14,26 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.coinsuper</groupId>
-            <artifactId>coinsuper-utils</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--公共出入参封装组件-->
+        <dependency>
+            <groupId>com.coinsuper.framework</groupId>
+            <artifactId>api-dep</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.3.17.RELEASE</version>
+            <version>4.3.18.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -33,11 +45,39 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>sisu-inject-plexus</artifactId>
+                    <groupId>org.sonatype.sisu</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>plexus-utils</artifactId>
+                    <groupId>org.codehaus.plexus</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>3.5.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org.eclipse.sisu.plexus</artifactId>
+                    <groupId>org.eclipse.sisu</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>plexus-sec-dispatcher</artifactId>
+                    <groupId>org.sonatype.plexus</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>

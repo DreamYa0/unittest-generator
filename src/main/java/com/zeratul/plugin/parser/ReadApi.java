@@ -1,6 +1,6 @@
 package com.zeratul.plugin.parser;
 
-import com.coinsuper.common.model.Request;
+import com.coinsuper.common.dto.Request;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
