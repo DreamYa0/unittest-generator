@@ -135,7 +135,9 @@ public class JavaTestGenerator {
                             dtoClass = loadClass(className);
                         } catch (ClassNotFoundException e) {
                             // 获取类的属性名称
-                            return obtainFieldNames(className);
+                            List<String> fieldNames = obtainFieldNames(className);
+                            paramList.addAll(fieldNames);
+                            continue;
                         }
 
                         addBasicTypeParamName(dtoClass, paramName, paramList);
@@ -158,14 +160,13 @@ public class JavaTestGenerator {
                                     if (genericType instanceof TypeVariable) {
 
                                         TypeVariable[] typeParameters = dtoClass.getTypeParameters();
-                                        ParameterizedType parameterize = TypeUtils.parameterize(dtoClass,typeParameters);
+                                        ParameterizedType parameterize = TypeUtils.parameterize(dtoClass, typeParameters);
 
 
                                         Map<String, Object> paramsFromType = getParamsFromType(parameterize);
                                         if (Boolean.FALSE.equals(CollectionUtils.isEmpty(paramsFromType))) {
                                             paramList.addAll(paramsFromType.keySet());
                                         }
-
 
 
                                     } else if (genericType instanceof Class) {

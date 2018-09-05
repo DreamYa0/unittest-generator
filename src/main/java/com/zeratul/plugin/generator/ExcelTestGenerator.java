@@ -1,5 +1,6 @@
 package com.zeratul.plugin.generator;
 
+import com.github.javaparser.ast.Modifier;
 import com.zeratul.plugin.java.JavaAstModel;
 import com.zeratul.plugin.java.Method;
 import com.zeratul.plugin.parser.JavaParser;
@@ -15,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author dreamyao
@@ -42,13 +44,29 @@ public class ExcelTestGenerator {
         Method method;
         String fileName;
         String genFilePath;
-        for (Iterator iterator = model.methods.iterator(); iterator.hasNext(); genExcelMethod(fileName, genFilePath, model, method)) {
-            method = (Method) iterator.next();
-            fileName = "Test" + StringUtils.toUpperCaseFirstOne(method.getName());
-            genFilePath = basePath + File.separator + model.className.toLowerCase() + File.separator;
-            File genDir = new File(genFilePath);
-            if (!genDir.exists()) {
-                boolean mkdirs = genDir.mkdirs();
+
+        Iterator<Method> iterator = model.methods.iterator();
+
+        while (iterator.hasNext()) {
+            method = iterator.next();
+
+            Iterator<Modifier> modifierIte = method.modifiers.iterator();
+            while (modifierIte.hasNext()) {
+                Modifier modifier = modifierIte.next();
+
+                // public方法才生成测试用例
+                if (Objects.equals(modifier, com.github.javaparser.ast.Modifier.PUBLIC)) {
+
+                    fileName = "Test" + StringUtils.toUpperCaseFirstOne(method.getName());
+                    genFilePath = basePath + File.separator + model.className.toLowerCase() + File.separator;
+                    File genDir = new File(genFilePath);
+                    if (!genDir.exists()) {
+                        boolean mkdirs = genDir.mkdirs();
+                    }
+
+                    genExcelMethod(fileName, genFilePath, model, method);
+
+                }
             }
         }
     }
