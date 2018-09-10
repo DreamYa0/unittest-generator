@@ -22,7 +22,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-            <scope>provided</scope>
         </dependency>
         <!--公共出入参封装组件-->
         <dependency>
@@ -33,7 +32,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>4.3.18.RELEASE</version>
+            <version>5.0.8.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
