@@ -21,9 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -264,7 +261,7 @@ public class JavaTestGenerator {
     }
 
     private static boolean noSprigInterface(Type type) {
-        return Boolean.FALSE.equals(type instanceof HttpSession) && Boolean.FALSE.equals(type instanceof HttpServletRequest) && Boolean.FALSE.equals(type instanceof HttpServletResponse);
+        return Boolean.FALSE.equals("javax.servlet.http.HttpSession".equals(type.getTypeName())) && Boolean.FALSE.equals("javax.servlet.http.HttpServletRequest".equals(type.getTypeName())) && Boolean.FALSE.equals("javax.servlet.http.HttpServletResponse".equals(type.getTypeName()));
     }
 
 

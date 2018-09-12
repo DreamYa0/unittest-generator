@@ -13,7 +13,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.Reporter;
 
-import javax.validation.constraints.Null;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -112,7 +111,6 @@ public class ReadApi {
                                 RequestParameters requestParameters = new RequestParameters();
                                 requestParameters.setParameterName(field.getName());
 
-                                Null isnull = null;
                                 if (parasClass.getName().equals(Request.class.getName())) {
                                     Annotation[][] parameterAnnotations = currentMethod.getParameterAnnotations();
                                     if (parameterAnnotations != null && parameterAnnotations.length > 0 && parameterAnnotations[0].length > 0) {
@@ -130,15 +128,11 @@ public class ReadApi {
                                     }
                                 } else {
 
-                                    isnull = field.getAnnotation(Null.class);
                                     requestParameters.setParameterType(field.getType().getSimpleName());
                                 }
 
-                                if (isnull != null) {
-                                    requestParameters.setParameterRequired(true);
-                                } else {
-                                    requestParameters.setParameterRequired(false);
-                                }
+                                requestParameters.setParameterRequired(false);
+
                                 requestParasList.add(requestParameters);
                                 //处理当前属性的子对象(判断子对象是否是自定义的对象)
                                 Type subType = field.getGenericType();
