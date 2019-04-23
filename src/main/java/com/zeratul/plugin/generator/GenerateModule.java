@@ -149,7 +149,7 @@ public class GenerateModule {
      * 生成测试基类
      */
     private void generateBaseNgTest(String testDirectory) {
-        File parentFile = new File(testDirectory + "/java/com/coinsuper/autotest/");
+        File parentFile = new File(testDirectory + "/java/com/ntocc/autotest/");
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
@@ -167,7 +167,7 @@ public class GenerateModule {
      * @param m
      */
     private void generateMethodTest(GenerateMethod m, String testDirectory) {
-        File parentFile = new File(testDirectory + "/java/com/coinsuper/autotest/" + serviceName.toLowerCase());
+        File parentFile = new File(testDirectory + "/java/com/ntocc/autotest/" + serviceName.toLowerCase());
         if (!parentFile.exists()) {
             boolean mkDirs = parentFile.mkdirs();
         }
@@ -191,9 +191,9 @@ public class GenerateModule {
             String typeName = getReturnTypeName(returnType);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.zhubajie.coinsuper.BaseNgTest;\n" +
+                        "import com.ntocc.BaseNgTest;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import java.util.Map;\n" +
@@ -248,9 +248,9 @@ public class GenerateModule {
             parameterTypeSimpleTypeName = getParameterTypeSimpleName(parameterType1);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.coinsuper.autotest.BaseNgTest;\n" +
+                        "import com.ntocc.autotest.BaseNgTest;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import java.util.Map;\n" +
@@ -298,9 +298,9 @@ public class GenerateModule {
         } else {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.coinsuper.autotest.BaseNgTest;\n" +
+                        "import com.ntocc.autotest.BaseNgTest;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import java.util.Map;\n" +
@@ -345,7 +345,7 @@ public class GenerateModule {
     }
 
     private void generateMethodUnitTest(GenerateMethod m, String testDirectory) {
-        File parentFile = new File(testDirectory + "/java/com/coinsuper/autotest/" + serviceName.toLowerCase());
+        File parentFile = new File(testDirectory + "/java/com/ntocc/autotest/" + serviceName.toLowerCase());
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
@@ -369,9 +369,9 @@ public class GenerateModule {
             String typeName = getReturnTypeName(returnType);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.coinsuper.framework.test.BaseTestCase;\n" +
+                        "import com.ntocc.framework.test.BaseTestCase;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import java.util.Map;\n" +
@@ -423,9 +423,9 @@ public class GenerateModule {
             parameterTypeSimpleTypeName = getParameterTypeSimpleName(parameterType1);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.coinsuper.framework.test.BaseTestCase;\n" +
+                        "import com.ntocc.framework.test.BaseTestCase;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import java.util.Map;\n" +
@@ -470,9 +470,9 @@ public class GenerateModule {
         } else {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                bw.write("package com.coinsuper.autotest." + serviceName.toLowerCase() + ";\n" +
+                bw.write("package com.ntocc.autotest." + serviceName.toLowerCase() + ";\n" +
                         "\n" +
-                        "import com.coinsuper.framework.test.BaseTestCase;\n" +
+                        "import com.ntocc.framework.test.BaseTestCase;\n" +
                         "import com.atomic.enums.Data;\n" +
                         "import org.testng.annotations.Test;\n" +
                         "import java.util.Map;\n" +
