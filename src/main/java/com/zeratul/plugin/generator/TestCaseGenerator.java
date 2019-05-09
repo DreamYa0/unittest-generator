@@ -71,18 +71,6 @@ public class TestCaseGenerator extends AbstractMojo {
     @Parameter
     private String applicationName;
 
-    /**
-     * dubbo接口Class名称
-     */
-    @Parameter
-    private String dubboClass;
-
-    /**
-     * dubbo接口的包路径
-     */
-    @Parameter
-    private String dubboPackage;
-
     private MavenProject project;
 
     public static void main(String[] args) {
@@ -152,18 +140,6 @@ public class TestCaseGenerator extends AbstractMojo {
 
         if (!CollectionUtils.isEmpty(restFulTestMap)) {
             HttpGenerator.createRestApiCase(restFulTestMap.get("className"), restFulTestMap.get("package"));
-        }
-
-        if (Boolean.FALSE.equals(StringUtils.isEmpty(dubboClass))) {
-            try {
-                new GenerateModule(testDirectory, Class.forName(dubboClass));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Boolean.FALSE.equals(StringUtils.isEmpty(dubboPackage))) {
-            new GenerateModule(testDirectory, dubboPackage);
         }
 
         getLog().info("testDirectory:" + testDirectory);

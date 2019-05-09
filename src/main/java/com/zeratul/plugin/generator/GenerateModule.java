@@ -29,26 +29,25 @@ public class GenerateModule {
     private String simpleTypeName;
     private String parameterSimpleTypeName;
     private String parameterTypeSimpleTypeName;
-    private List<Class<?>> classList = Lists.newArrayList();
 
     /**
      * 按类生成测试类
      * @param clazz
      */
-    public GenerateModule(String testDirectory, Class<?> clazz) {
+    public GenerateModule(Class<?> clazz) {
         this.clazz = clazz;
         init();
         serviceName = clazz.getSimpleName();
         //生成test.properties
-        generateTestProperties(testDirectory);
+        generateTestProperties();
         //生成baseTest
-        generateBaseNgTest(testDirectory);
+        generateBaseNgTest();
         // 生成testng.xml文件
         GenerateXml.getInstance().generateTestNGXml();
         //按方法依次生成Test
         methodList.forEach(gm -> {
-            generateMethodTest(gm, testDirectory);
-            generateExcel(gm, testDirectory);
+            generateMethodTest(gm);
+            generateExcel(gm);
         });
         System.out.println("测试类" + clazz.getName() + "测试类生成成功！");
     }
@@ -57,7 +56,7 @@ public class GenerateModule {
      * 按包路径批量生成测试类
      * @param packages
      */
-    public GenerateModule(String testDirectory, String... packages) {
+    public GenerateModule(String... packages) {
         if (packages == null || packages.length == 0) {
             Reporter.log("------------------- 被测类包名不能为空！-------------------");
             throw new ParameterException("被测类包名不能为空！");
@@ -71,15 +70,15 @@ public class GenerateModule {
                     init();
                     serviceName = clazz.getSimpleName();
                     //生成test.properties
-                    generateTestProperties(testDirectory);
+                    generateTestProperties();
                     //生成baseTest
-                    generateBaseNgTest(testDirectory);
+                    generateBaseNgTest();
                     // 生成testng.xml文件
                     GenerateXml.getInstance().generateTestNGXml();
                     //按方法依次生成Test
                     methodList.forEach(gm -> {
-                        generateMethodTest(gm, testDirectory);
-                        generateExcel(gm, testDirectory);
+                        generateMethodTest(gm);
+                        generateExcel(gm);
                     });
                     methodList.clear();
                 } catch (ClassNotFoundException e) {
@@ -92,8 +91,8 @@ public class GenerateModule {
     }
 
 
-    private void generateTestProperties(String testDirectory) {
-        File f = new File(testDirectory + "/resources/test.properties");
+    private void generateTestProperties() {
+        File f = new File("src/test/resources/test.properties");
         if (!f.exists()) {
             try {
                 f.getParentFile().mkdirs();
@@ -137,8 +136,8 @@ public class GenerateModule {
     /**
      * 生成测试基类
      */
-    private void generateBaseNgTest(String testDirectory) {
-        File parentFile = new File(testDirectory + "/java/com/ntocc/autotest/");
+    private void generateBaseNgTest() {
+        File parentFile = new File("src/test/java/com/atomic/autotest/");
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
@@ -155,8 +154,8 @@ public class GenerateModule {
      * 生成测试类
      * @param m
      */
-    private void generateMethodTest(GenerateMethod m, String testDirectory) {
-        File parentFile = new File(testDirectory + "/java/com/atomic/autotest/" + serviceName.toLowerCase());
+    private void generateMethodTest(GenerateMethod m) {
+        File parentFile = new File("src/test/java/com/atomic/autotest/" + serviceName.toLowerCase());
         if (!parentFile.exists()) {
             boolean mkDirs = parentFile.mkdirs();
         }
@@ -333,8 +332,8 @@ public class GenerateModule {
         }
     }
 
-    private void generateExcel(GenerateMethod gm, String testDirectory) {
-        File parentFile = new File(testDirectory + "/resources/com/atomic/autotest/" + serviceName.toLowerCase());
+    private void generateExcel(GenerateMethod gm) {
+        File parentFile = new File("src/test/resources/com/atomic/autotest/" + serviceName.toLowerCase());
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
