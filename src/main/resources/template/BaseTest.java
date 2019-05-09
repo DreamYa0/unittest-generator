@@ -1,4 +1,4 @@
-package com.zhubajie.autotest;
+package com.atomic.autotest;
 
 import com.atomic.BaseDubbo;
 

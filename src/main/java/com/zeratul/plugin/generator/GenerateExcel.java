@@ -27,6 +27,8 @@ public class GenerateExcel {
             writeCell(sheet, i++, 1, "用例标题", false);
             writeCell(sheet, i, 0, "assertResult");
             writeCell(sheet, i++, 1, "", false);
+            writeCell(sheet, i, 0, "autotest");
+            writeCell(sheet, i++, 1, "", false);
             writeObjectToSheet(i, gm.getRequestMap(), sheet, null, gm.getMethod());
         }
         FileOutputStream fo;
