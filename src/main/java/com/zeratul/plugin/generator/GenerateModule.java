@@ -1,6 +1,5 @@
 package com.zeratul.plugin.generator;
 
-import com.beust.jcommander.ParameterException;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closer;
 import com.zeratul.plugin.java.Services;
@@ -59,7 +58,7 @@ public class GenerateModule {
     public GenerateModule(String... packages) {
         if (packages == null || packages.length == 0) {
             Reporter.log("------------------- 被测类包名不能为空！-------------------");
-            throw new ParameterException("被测类包名不能为空！");
+            throw new RuntimeException("被测类包名不能为空！");
         }
         Arrays.stream(packages).forEach(pack -> {
             ReadApi apiUtils = new ReadApi();
@@ -189,7 +188,7 @@ public class GenerateModule {
                         "import " + typeName + ";\n" +
                         "import " + parameterTypeName + ";\n" +
                         "\n");
-                String line = "public class Test$methodName extends BaseNgTest<$serviceName>{" +
+                String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
                         "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
@@ -214,7 +213,7 @@ public class GenerateModule {
                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
                         " \t */\n" +
                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
-                String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName> result){" + "\n";
+                String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName> result) {" + "\n";
                 bw.write(replaceLine(line1));
                 bw.write(" \t\t\n" +
                         " \t}");
@@ -247,7 +246,7 @@ public class GenerateModule {
                         "import " + parameterTypeName + ";\n" +
                         "import " + parameterTypeName1 + ";\n" +
                         "\n");
-                String line = "public class Test$methodName extends BaseNgTest<$serviceName>{" +
+                String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
                         "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
@@ -272,7 +271,7 @@ public class GenerateModule {
                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
                         " \t */\n" +
                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
-                String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName<$parameterTypeSimpleTypeName>> result){" + "\n";
+                String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName<$parameterTypeSimpleTypeName>> result) {" + "\n";
                 bw.write(replaceLine(line1));
                 bw.write(" \t\t\n" +
                         " \t}");
@@ -294,7 +293,7 @@ public class GenerateModule {
                         "import java.util.Map;\n" +
                         "import " + clazz.getName() + ";\n" +
                         "\n");
-                String line = "public class Test$methodName extends BaseNgTest<$serviceName>{" +
+                String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
                         "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
@@ -319,7 +318,7 @@ public class GenerateModule {
                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
                         " \t */\n" +
                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n" +
-                        " \tpublic void testCase(Map<String, Object> context, Object result){\n" +
+                        " \tpublic void testCase(Map<String, Object> context, Object result) {\n" +
                         " \t\t\n" +
                         " \t}");
                 bw.newLine();

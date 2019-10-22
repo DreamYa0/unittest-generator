@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ${servicePackage};
 
 @SpringBootTest(classes = ${springBootApplicationMainClass}.class)
-public class ${clazz} extends BaseTestCase<${service}>{
+public class ${clazz} extends BaseTestCase<${service}> {
 
     @Override
     public void beforeTest(Map<String, Object> context) {
