@@ -26,10 +26,12 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -132,8 +134,12 @@ public class JavaTestGenerator {
                             dtoClass = loadClass(className);
                         } catch (ClassNotFoundException e) {
                             // 获取类的属性名称
-                            List<String> fieldNames = obtainFieldNames(className);
+                            List<String> fieldNames = new ArrayList<>();
+
+                            obtainFieldNames(className, fieldNames);
+
                             paramList.addAll(fieldNames);
+
                             continue;
                         }
 
@@ -308,17 +314,42 @@ public class JavaTestGenerator {
         throw new RuntimeException("生成测试包路径错误！");
     }
 
-    private static List<String> obtainFieldNames(String className) {
+    private static void obtainFieldNames(String className,List<String> paramNames) {
 
         try {
             String fullClassPath = spliceFullClassPath(className);
             JavaParser parser = new JavaParser(fullClassPath);
             parser.parse();
             JavaAstModel astModel = parser.getModel();
-            return astModel.fields.stream().map(field -> field.name).collect(Collectors.toList());
+
+            // 当前类中的属性字段
+            List<String> fieldNames = astModel.fields.stream().map(field -> field.name).collect(Collectors.toList());
+            paramNames.addAll(fieldNames);
+
+            // 获取父类中的属性
+            List<String> parents = astModel.parents;
+            Set<String> imports = astModel.imports;
+
+            for (String parent : parents) {
+
+                // 父类的全限定类名
+                String parentFullClassName = astModel.packageName + "." + parent;
+
+                for (String anImport : imports) {
+
+                    if (anImport.contains(parent)) {
+
+                        parentFullClassName = anImport;
+                    }
+                }
+
+                // 获取到父类中的属性
+                obtainFieldNames(parentFullClassName, paramNames);
+            }
+
         } catch (Exception e) {
 
+            throw new RuntimeException("获取入参对象属性失败");
         }
-        return Lists.newArrayList();
     }
 }
