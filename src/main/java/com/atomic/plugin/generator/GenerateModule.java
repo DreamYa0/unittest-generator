@@ -232,7 +232,7 @@ public class GenerateModule {
             String parameterTypeName1 = parameterType1.getTypeName();
             simpleTypeName = getReturnTypeSimpleName(returnType);
             parameterSimpleTypeName = getReturnTypeSimpleName(parameterType);
-            parameterTypeSimpleTypeName = getParameterTypeSimpleName(parameterType1);
+            parameterTypeSimpleTypeName = getReturnTypeSimpleName(parameterType1);
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
                 bw.write("package com.atomic.autotest." + serviceName.toLowerCase() + ";\n" +
