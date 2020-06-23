@@ -22,36 +22,17 @@ public class HttpGenerator {
     private static final String EXCEL_FILE_DIR = "src/test/resources/com/atomic/autotest/";
     private static String httpServiceName = "";
 
-    public static void createHttpApiCase(String serviceName, String... classify) {
-        httpServiceName = serviceName;
-        if (classify != null && classify.length == 1) {
-            createTestFile(false, classify[0]);
-            createExcelFile(classify[0]);
-            generateHttpTestBase();
-            // 生成testng.xml文件
-            GenerateXml.getInstance().generateTestNGXml();
-            System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
-        } else {
-            createTestFile(false);
-            createExcelFile();
-            generateHttpTestBase();
-            // 生成testng.xml文件
-            GenerateXml.getInstance().generateTestNGXml();
-            System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
-        }
-    }
-
     public static void createRestApiCase(String serviceName, String... classify) {
         httpServiceName = serviceName;
         if (classify != null && classify.length == 1) {
-            createTestFile(true, classify[0]);
+            createTestFile(classify[0]);
             createExcelFile(classify[0]);
             generateRestTestBase();
             // 生成testng.xml文件
             GenerateXml.getInstance().generateTestNGXml();
             System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
         } else {
-            createTestFile(true);
+            createTestFile();
             createExcelFile();
             generateRestTestBase();
             // 生成testng.xml文件
@@ -60,7 +41,7 @@ public class HttpGenerator {
         }
     }
 
-    private static void createTestFile(boolean isRestApi, String... classify) {
+    private static void createTestFile(String... classify) {
         String outName = "Test" + httpServiceName + ".java";
         File outParent;
         if (classify != null && classify.length == 1) {
@@ -79,18 +60,10 @@ public class HttpGenerator {
         try {
             //import 写入
             String afterImportStr;
-            if (isRestApi) {
-                if (classify != null && classify.length == 1) {
-                    afterImportStr = createRestTemplate(classify[0].toLowerCase());
-                } else {
-                    afterImportStr = createRestTemplate();
-                }
+            if (classify != null && classify.length == 1) {
+                afterImportStr = createRestTemplate(classify[0].toLowerCase());
             } else {
-                if (classify != null && classify.length == 1) {
-                    afterImportStr = createTemplate(classify[0].toLowerCase());
-                } else {
-                    afterImportStr = createTemplate();
-                }
+                afterImportStr = createRestTemplate();
             }
             afterImportStr = afterImportStr.replaceAll("\\$serviceName", httpServiceName);
             //写入文件
@@ -99,35 +72,6 @@ public class HttpGenerator {
             bw.flush();
             bw.close();
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 生成测试基类
-     */
-    private static void generateHttpTestBase() {
-        File parentFile = new File("src/test/java/com/atomic/autotest/");
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
-        }
-        String baseTestFile = "HttpTestBase.java";
-        File f = new File(parentFile, baseTestFile);
-        if (f.exists()) {
-            return;
-        }
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(f));
-            bufferedWriter.write("package com.atomic.autotest;\n" +
-                    "\n" +
-                    "import com.atomic.BaseHttp;\n" +
-                    "\n" +
-                    "public abstract class HttpTestBase extends BaseHttp {\n" +
-                    "\n" +
-                    "}");
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
