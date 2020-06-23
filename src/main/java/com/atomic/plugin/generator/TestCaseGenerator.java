@@ -50,14 +50,6 @@ public class TestCaseGenerator extends AbstractMojo {
     private List<String> classPath;
 
     /**
-     * HTTP接口生成信息
-     * package：测试类生成包名称
-     * className：生成测试类名称
-     */
-    @Parameter
-    private Map<String, String> httpTestMap;
-
-    /**
      * RestFul接口生成信息
      * package：测试类生成包名称
      * className：生成测试类名称
@@ -75,7 +67,6 @@ public class TestCaseGenerator extends AbstractMojo {
 
     public static void main(String[] args) {
         // HttpGenerator.createRestApiCase("TestPages", "unittest");
-        HttpGenerator.createHttpApiCase("TestPagesHttp", "unittest");
     }
 
     @Override
@@ -132,10 +123,6 @@ public class TestCaseGenerator extends AbstractMojo {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        if (!CollectionUtils.isEmpty(httpTestMap)) {
-            HttpGenerator.createHttpApiCase(httpTestMap.get("className"), httpTestMap.get("package"));
         }
 
         if (!CollectionUtils.isEmpty(restFulTestMap)) {
