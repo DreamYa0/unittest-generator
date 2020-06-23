@@ -1,10 +1,10 @@
 package com.atomic.plugin.generator;
 
+import com.atomic.plugin.java.Services;
 import com.atomic.plugin.parser.ReadApi;
+import com.atomic.plugin.util.FileUtils;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closer;
-import com.atomic.plugin.java.Services;
-import com.atomic.plugin.util.FileUtils;
 import org.testng.Reporter;
 
 import java.io.BufferedReader;
@@ -31,7 +31,8 @@ public class GenerateModule {
 
     /**
      * 按类生成测试类
-     * @param clazz
+     *
+     * @param clazz clazz
      */
     public GenerateModule(Class<?> clazz) {
         this.clazz = clazz;
@@ -53,7 +54,8 @@ public class GenerateModule {
 
     /**
      * 按包路径批量生成测试类
-     * @param packages
+     *
+     * @param packages 包路径
      */
     public GenerateModule(String... packages) {
         if (packages == null || packages.length == 0) {
@@ -96,19 +98,19 @@ public class GenerateModule {
             try {
                 f.getParentFile().mkdirs();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write("# dev：开发环境 test：测试环境 demo：预发布环境");
+                bw.write("# t1:测试环境1 t2:测试环境2 t3:测试环境3 t4:测试环境4 demo:demo环境 (必填)");
                 bw.newLine();
-                bw.write("profile=test");
+                bw.write("profile=t1");
                 bw.newLine();
                 bw.write("#dubbo服务的版本号");
                 bw.newLine();
                 bw.write("service.version=");
                 bw.newLine();
-                bw.write("#项目名称");
+                bw.write("#项目名称(必填)");
                 bw.newLine();
                 bw.write("project.name=");
                 bw.newLine();
-                bw.write("#运行人");
+                bw.write("#运行人(必填)");
                 bw.newLine();
                 bw.write("runner=");
                 bw.newLine();
@@ -151,6 +153,7 @@ public class GenerateModule {
 
     /**
      * 生成测试类
+     *
      * @param m
      */
     private void generateMethodTest(GenerateMethod m) {
