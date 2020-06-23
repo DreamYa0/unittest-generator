@@ -18,10 +18,10 @@ public class ${clazz} extends BaseTestCase<${service}> {
     }
 
     /**
-    * moke录制标签,加入了之后,会自动录制mybatis执行情况,之后可以改为replay模式会重放
+    * mock录制标签,加入了之后,会自动录制mybatis执行情况,之后可以改为replay模式会重放
     * @Mode(TestMethodMode.REC)
-    * @AutoAssert( checkMode = CheckMode.REC)注解实现智能化断言录制
-    * @AutoAssert( checkMode = CheckMode.REPLAY)注解实现智能化断言回放
+    * @RollBack( dbName = "数据库库名",tableName={"表名1","表名2"})注解实现单库多表数据回滚
+    * @RollBackAll( dbAndTable = "{"库名1.表名1","库名2.表名1"}")注解实现多库多表数据回滚
     * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试
     * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))
     */
