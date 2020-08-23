@@ -98,7 +98,7 @@ public class GenerateModule {
             try {
                 f.getParentFile().mkdirs();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write("# t1:测试环境1 t2:测试环境2 t3:测试环境3 t4:测试环境4 demo:demo环境 (必填)");
+                bw.write("#(必填)t1:测试环境1 t2:测试环境2 t3:测试环境3 t4:测试环境4 demo:demo环境");
                 bw.newLine();
                 bw.write("profile=t1");
                 bw.newLine();
@@ -106,11 +106,11 @@ public class GenerateModule {
                 bw.newLine();
                 bw.write("service.version=");
                 bw.newLine();
-                bw.write("#项目名称(必填)");
+                bw.write("#(必填)测试项目名称");
                 bw.newLine();
                 bw.write("project.name=");
                 bw.newLine();
-                bw.write("#运行人(必填)");
+                bw.write("#(必填)测试人员");
                 bw.newLine();
                 bw.write("runner=");
                 bw.newLine();
