@@ -35,11 +35,11 @@ public class HttpExcelGenerator {
         //**预留
         writeCell(sheet, i, 0, "caseName");
         writeCell(sheet, i++, 1, "用例标题", false);
-        writeCell(sheet, i, 0, "httpMode");
+        writeCell(sheet, i, 0, "mode");
         writeCell(sheet, i++, 1, "", false);
-        writeCell(sheet, i, 0, "httpHost");
+        writeCell(sheet, i, 0, "host");
         writeCell(sheet, i++, 1, "", false);
-        writeCell(sheet, i, 0, "httpMethod");
+        writeCell(sheet, i, 0, "method");
         writeCell(sheet, i++, 1, "", false);
         /*List<String> paramNameList = method.getParamNameList();
         for (String paramName : paramNameList) {
@@ -62,7 +62,7 @@ public class HttpExcelGenerator {
         final int[] i = {startIndex};
         jobj.keySet().forEach(param -> {
             Object obj = jobj.get(param);
-            if (obj != null && obj instanceof JSONObject) {
+            if (obj instanceof JSONObject) {
                 i[0] = writeObjectToSheet(i[0], (JSONObject) obj, sheet, param);
             } else if (obj == null) {
                 if (prefix.length == 0) {
