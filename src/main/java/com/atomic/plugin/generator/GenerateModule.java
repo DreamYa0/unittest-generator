@@ -79,7 +79,8 @@ public class GenerateModule {
                     //按方法依次生成Test
                     methodList.forEach(gm -> {
                         generateMethodTest(gm);
-                        generateExcel(gm);
+                        // generateExcel(gm);
+                        generateYaml(gm);
                     });
                     methodList.clear();
                 } catch (ClassNotFoundException e) {
@@ -336,6 +337,21 @@ public class GenerateModule {
             return; //不覆盖
         }
         new GenerateExcel(Lists.newArrayList(gm), outFile);
+        // handleFile(Lists.newArrayList(gm), outFile);
+    }
+
+    private void generateYaml(GenerateMethod gm) {
+        File parentFile = new File("src/test/resources/com/atomic/autotest/" + serviceName.toLowerCase());
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+//        File outFile = new File(parentFile, "Test" + methodName + ".xls");
+        File outFile = new File(parentFile, "Test" + methodName + ".yaml");
+        if (outFile.exists()) {
+            return; //不覆盖
+        }
+//        new GenerateExcel(Lists.newArrayList(gm), outFile);
+        YmalCaseFactory.GenerateDubboYamlCase(outFile);
         // handleFile(Lists.newArrayList(gm), outFile);
     }
 

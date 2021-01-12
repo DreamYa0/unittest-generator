@@ -1,6 +1,7 @@
 package com.atomic.plugin.generator.http;
 
 import com.atomic.plugin.generator.GenerateXml;
+import com.atomic.plugin.generator.YmalCaseFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,7 +27,8 @@ public class HttpGenerator {
         httpServiceName = serviceName;
         if (classify != null && classify.length == 1) {
             createTestFile(classify[0]);
-            createExcelFile(classify[0]);
+//            createExcelFile(classify[0]);
+            createYamlFile();
             generateRestTestBase();
             // 生成testng.xml文件
             GenerateXml.getInstance().generateTestNGXml();
@@ -126,6 +128,28 @@ public class HttpGenerator {
         HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
         hg.generate();
         // handleHttpFile(outFile);
+    }
+
+    /**
+     * 创建数据驱动的Yaml文件
+     */
+    private static void createYamlFile(String... classify) {
+        File parentFile;
+        if (classify != null && classify.length == 1) {
+            parentFile = new File(EXCEL_DIR + classify[0].toLowerCase());
+        } else {
+            parentFile = new File(EXCEL_FILE_DIR);
+        }
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+        File outFile = new File(parentFile, "Test" + httpServiceName + ".yaml");
+        if (outFile.exists()) {
+            outFile.renameTo(new File(parentFile, "Test" + httpServiceName + "_bak.yaml"));
+        }
+//        HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
+//        hg.generate();
+        YmalCaseFactory.GenerateHttpYamlCase(outFile);
     }
 
     private static String createTemplate(String... path) {
