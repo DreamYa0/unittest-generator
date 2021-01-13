@@ -101,7 +101,7 @@ class HttpCase {
 
     private HttpCase() {
         this.caseName = "用例标题";
-        this.testOnly = true;
+        this.testOnly = false;
         this.mode = "";
         this.host = "";
         this.method = "";
