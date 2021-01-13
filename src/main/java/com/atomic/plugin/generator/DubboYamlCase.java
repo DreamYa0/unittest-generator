@@ -3,54 +3,46 @@ package com.atomic.plugin.generator;
 import com.atomic.plugin.generator.service.YamlCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DubboYamlCase implements YamlCase, Serializable {
-    private static final long serialVersionUID = 7129153011669306427L;
+    private static final long serialVersionUID = -8357955180082434217L;
     /**
-     * 测试用例标题
+     * Dubbo接口名称
      *
      */
-    private String caseName;
+    private String interfaceName;
 
     /**
-     * 测试用例开关，自动断言
+     * 测试用例
      *
      */
-    private boolean assertResult;
+    private List<DubboCase> caseList;
 
-    /**
-     * 测试用例开关，自动创建测试用例
-     *
-     */
-    private boolean autotest;
+    public String getInterfaceName() {
+        return interfaceName;
+    }
 
-    /**
-     * 测试用例开关，运行测试用例
-     *
-     */
-    private boolean testOnly;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
 
-    /**
-     * 测试用例入参数据
-     *
-     */
-    private String data;
+    public List<DubboCase> getDubboCaseList() {
+        return caseList;
+    }
 
-    /**
-     * 测试用例欲求返回结果
-     *
-     */
-    private String expectResult;
+    public void setDubboCaseList(List<DubboCase> caseList) {
+        this.caseList = caseList;
+    }
 
     private DubboYamlCase() {
-        this.caseName = "用例标题";
-        this.assertResult = true;
-        this.autotest = false;
-        this.testOnly = false;
-        this.data = "";
-        this.expectResult = "";
+        this.interfaceName = "Dubbo接口名称";
+        this.caseList = new ArrayList<>();
+        this.caseList.add(DubboCase.getInstance());
     }
 
     private static class DubboYamlCaseClassIntance {
@@ -61,62 +53,13 @@ public class DubboYamlCase implements YamlCase, Serializable {
         return DubboYamlCaseClassIntance.instance;
     }
 
-    public String getCaseName() {
-        return caseName;
-    }
-
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
-    }
-
-    public boolean isAssertResult() {
-        return assertResult;
-    }
-
-    public void setAssertResult(boolean assertResult) {
-        this.assertResult = assertResult;
-    }
-
-    public boolean isAutotest() {
-        return autotest;
-    }
-
-    public void setAutotest(boolean autotest) {
-        this.autotest = autotest;
-    }
-
-    public boolean isTestOnly() {
-        return testOnly;
-    }
-
-    public void setTestOnly(boolean testOnly) {
-        this.testOnly = testOnly;
-    }
-
-    public String  getData() {
-        return data;
-    }
-
-    public void setData(String  data) {
-        this.data = data;
-    }
-
-    public String  getExpectResult() {
-        return expectResult;
-    }
-
-    public void setExpectResult(String  expectResult) {
-        this.expectResult = expectResult;
-    }
-
     @Override
     public void CreateYamlCase(File outFile) {
         FileOutputStream fo = null;
         try {
             fo = new FileOutputStream(outFile);
 
-//            ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
             mapper.writeValue(outFile, DubboYamlCase.getInstance());
 
             fo.close();

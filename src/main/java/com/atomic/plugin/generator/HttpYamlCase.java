@@ -3,61 +3,46 @@ package com.atomic.plugin.generator;
 import com.atomic.plugin.generator.service.YamlCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpYamlCase implements YamlCase, Serializable {
-    private static final long serialVersionUID = -5469079915617578647L;
+    private static final long serialVersionUID = 3186442579459262591L;
     /**
-     * 测试用例标题
+     * Http接口名称
      *
      */
-    private String caseName;
+    private String interfaceName;
 
     /**
      * 测试用例开关，运行测试用例
      *
      */
-    private boolean testOnly;
+    private List<HttpCase> caseList;
 
-    /**
-     * 测试用例Http请求类型
-     *
-     */
-    private String mode;
+    public String getInterfaceName() {
+        return interfaceName;
+    }
 
-    /**
-     * 测试用例Http请求host
-     *
-     */
-    private String host;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
 
-    /**
-     * 测试用例Http请求method
-     *
-     */
-    private String method;
+    public List<HttpCase> getHttpCaseList() {
+        return caseList;
+    }
 
-    /**
-     * 测试用例入参数据
-     *
-     */
-    private String data;
-
-    /**
-     * 测试用例欲求返回结果
-     *
-     */
-    private String expectResult;
+    public void setHttpCaseList(List<HttpCase> caseList) {
+        this.caseList = caseList;
+    }
 
     private HttpYamlCase() {
-        this.caseName = "用例标题";
-        this.testOnly = true;
-        this.mode = "";
-        this.host = "";
-        this.method = "";
-        this.data = "";
-        this.expectResult = "";
+        this.interfaceName = "Http接口名称";
+        this.caseList = new ArrayList<>();
+        this.caseList.add(HttpCase.getInstance());
     }
 
     private static class HttpYamlCaseClassIntance {
@@ -68,70 +53,13 @@ public class HttpYamlCase implements YamlCase, Serializable {
         return HttpYamlCase.HttpYamlCaseClassIntance.instance;
     }
 
-    public String getCaseName() {
-        return caseName;
-    }
-
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
-    }
-
-    public boolean isTestOnly() {
-        return testOnly;
-    }
-
-    public void setTestOnly(boolean testOnly) {
-        this.testOnly = testOnly;
-    }
-
-    public String getMode() {
-        return mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public String getExpectResult() {
-        return expectResult;
-    }
-
-    public void setExpectResult(String expectResult) {
-        this.expectResult = expectResult;
-    }
-
     @Override
     public void CreateYamlCase(File outFile) {
         FileOutputStream fo = null;
         try {
             fo = new FileOutputStream(outFile);
 
-//            ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
             mapper.writeValue(outFile, HttpYamlCase.getInstance());
 
             fo.close();
