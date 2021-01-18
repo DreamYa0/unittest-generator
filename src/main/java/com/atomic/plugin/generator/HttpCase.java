@@ -1,6 +1,6 @@
 package com.atomic.plugin.generator;
 
-class HttpCase {
+public class HttpCase {
     /**
      * 测试用例标题
      *
