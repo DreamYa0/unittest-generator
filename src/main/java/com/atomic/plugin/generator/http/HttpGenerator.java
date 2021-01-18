@@ -139,9 +139,9 @@ public class HttpGenerator {
 
     private static String createTemplate(String... path) {
         if (path != null && path.length == 1) {
-            return "package  com.atomic.autotest." + path[0] + ";\n" +
+            return "package  com.atomic.autotest.RestTestBase." + path[0] + ";\n" +
                     "\n" +
-                    "import com.atomic.autotest.HttpTestBase;\n" +
+                    "import com.atomic.autotest.RestTestBase;\n" +
                     "import com.atomic.enums.Data;\n" +
                     "import org.testng.annotations.Test;\n" +
                     "\n" +
@@ -207,7 +207,7 @@ public class HttpGenerator {
 
     private static String createRestTemplate(String... path) {
         if (path != null && path.length == 1) {
-            return "package  com.atomic.autotest." + path[0] + ";\n" +
+            return "package  com.atomic.autotest.restService." + path[0] + ";\n" +
                     "\n" +
                     "import com.atomic.autotest.RestTestBase;\n" +
                     "import com.atomic.enums.Data;\n" +
@@ -277,6 +277,6 @@ public class HttpGenerator {
 
     public static void main(String[] args) {
         // 生成rest接口测试代码
-        HttpGenerator.createRestApiCase("electronicReceipt", "cashdesk-truck-broker/v0/open");
+        HttpGenerator.createRestApiCase("electronicReceipt", "cashdeskTruckBroker");
     }
 }
