@@ -9,51 +9,37 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * @author chenliang
- * @title
- * @date 16/9/13 下午2:28
- * @since 1.0.0
+ * 生成REST请求测试类
+ * 测试用例使用yaml格式文件
  */
 public class HttpGenerator {
 
     //生成文件目录
-    private static final String FILE_DIR = "src/test/java/com/atomic/autotest/";
-    private static final String EXCEL_DIR = "src/test/resources/com/atomic/autotest/";
-    private static final String TEST_FILE_DIR = "src/test/java/com/atomic/autotest/";
-    private static final String EXCEL_FILE_DIR = "src/test/resources/com/atomic/autotest/";
+    private static final String BASE_DIR = "src/test/java/com/atomic/autotest/";
+    private static final String SCRIPT_DIR = BASE_DIR + "restService/";
+    private static final String CASE_DIR = "src/test/resources/com/atomic/autotest/restService/";
     private static String httpServiceName = "";
 
     public static void createRestApiCase(String serviceName, String... classify) {
         httpServiceName = serviceName;
         if (classify != null && classify.length == 1) {
             createTestFile(classify[0]);
-//            createExcelFile(classify[0]);
-            createYamlFile();
-            generateRestTestBase();
-            // 生成testng.xml文件
-            GenerateXml.getInstance().generateTestNGXml();
-            System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
+            // createExcelFile(classify[0]);
+            createYamlFile(classify[0]);
         } else {
             createTestFile();
-            createExcelFile();
-            generateRestTestBase();
-            // 生成testng.xml文件
-            GenerateXml.getInstance().generateTestNGXml();
-            System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
+            // createExcelFile();
+            createYamlFile();
         }
+        // 生成testng.xml文件
+        generateRestTestBase();
+        GenerateXml.getInstance().generateTestNGXml();
+        System.out.println("--------------------测试类" + serviceName + "测试类生成成功！--------------------");
     }
 
     private static void createTestFile(String... classify) {
         String outName = "Test" + httpServiceName + ".java";
-        File outParent;
-        if (classify != null && classify.length == 1) {
-            outParent = new File(FILE_DIR + classify[0].toLowerCase());
-        } else {
-            outParent = new File(TEST_FILE_DIR);
-        }
-        //读取Process文件
-        if (!outParent.exists())
-            outParent.mkdirs();
+        File outParent = checkParentFile(SCRIPT_DIR, classify);
         File outFile = new File(outParent, outName);
         if (outFile.exists()) {
             outFile.renameTo(new File(outParent, outName + ".bak"));
@@ -82,10 +68,7 @@ public class HttpGenerator {
      * 生成REST API 接口测试用例基类
      */
     private static void generateRestTestBase() {
-        File parentFile = new File("src/test/java/com/atomic/autotest/");
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
-        }
+        File parentFile = checkParentFile(BASE_DIR);
         String baseTestFile = "RestTestBase.java";
         File f = new File(parentFile, baseTestFile);
         if (f.exists()) {
@@ -111,15 +94,7 @@ public class HttpGenerator {
      * 创建数据驱动的Excel文件
      */
     private static void createExcelFile(String... classify) {
-        File parentFile;
-        if (classify != null && classify.length == 1) {
-            parentFile = new File(EXCEL_DIR + classify[0].toLowerCase());
-        } else {
-            parentFile = new File(EXCEL_FILE_DIR);
-        }
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
-        }
+        File parentFile = checkParentFile(CASE_DIR, classify);
         File outFile = new File(parentFile, "Test" + httpServiceName + ".xls");
         if (outFile.exists()) {
             outFile.renameTo(new File(parentFile, "Test" + httpServiceName + "_bak..xls"));
@@ -134,22 +109,31 @@ public class HttpGenerator {
      * 创建数据驱动的Yaml文件
      */
     private static void createYamlFile(String... classify) {
-        File parentFile;
-        if (classify != null && classify.length == 1) {
-            parentFile = new File(EXCEL_DIR + classify[0].toLowerCase());
-        } else {
-            parentFile = new File(EXCEL_FILE_DIR);
-        }
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
-        }
+        File parentFile = checkParentFile(CASE_DIR, classify);
         File outFile = new File(parentFile, "Test" + httpServiceName + ".yaml");
         if (outFile.exists()) {
             outFile.renameTo(new File(parentFile, "Test" + httpServiceName + "_bak.yaml"));
         }
-//        HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
-//        hg.generate();
+        // HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
+        // hg.generate();
         YmalCaseFactory.GenerateHttpYamlCase(outFile);
+    }
+
+    /**
+     * 检查测试脚本和测试用例目录结构，未找到则创建
+     */
+    private static File checkParentFile(String dir, String... classify) {
+        File parentFile;
+        if (classify != null && classify.length == 1) {
+            parentFile = new File(dir + classify[0].toLowerCase());
+        } else {
+            parentFile = new File(dir);
+        }
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+
+        return parentFile;
     }
 
     private static String createTemplate(String... path) {
@@ -288,5 +272,10 @@ public class HttpGenerator {
                     " \t}\n" +
                     "}";
         }
+    }
+
+    public static void main(String[] args) {
+        // 生成rest接口测试代码
+        HttpGenerator.createRestApiCase("electronicReceipt", "cashdesk-truck-broker/v0/open");
     }
 }
