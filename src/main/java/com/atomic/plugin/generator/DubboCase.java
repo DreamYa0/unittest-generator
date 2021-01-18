@@ -1,6 +1,6 @@
 package com.atomic.plugin.generator;
 
-class DubboCase {
+public class DubboCase {
     /**
      * 测试用例标题
      *
