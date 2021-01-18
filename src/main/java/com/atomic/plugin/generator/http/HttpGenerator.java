@@ -171,9 +171,9 @@ public class HttpGenerator {
                     " \t}\n" +
                     "}";
         } else {
-            return "package  com.atomic.autotest;\n" +
+            return "package  com.atomic.autotest.RestTestBase;\n" +
                     "\n" +
-                    "import com.atomic.autotest.HttpTestBase;\n" +
+                    "import com.atomic.autotest.RestTestBase;\n" +
                     "import com.atomic.enums.Data;\n" +
                     "import org.testng.annotations.Test;\n" +
                     "\n" +
@@ -240,7 +240,7 @@ public class HttpGenerator {
                     " \t}\n" +
                     "}";
         } else {
-            return "package  com.atomic.autotest;\n" +
+            return "package  com.atomic.autotest.RestTestBase;\n" +
                     "\n" +
                     "import com.atomic.autotest.RestTestBase;\n" +
                     "import com.atomic.enums.Data;\n" +
