@@ -11,6 +11,7 @@ import java.io.IOException;
 /**
  * 生成REST请求测试类
  * 测试用例使用yaml格式文件
+ * 如果测试用例文件已存在，不覆盖，文件名追加_bak创建新文件
  */
 public class HttpGenerator {
 
