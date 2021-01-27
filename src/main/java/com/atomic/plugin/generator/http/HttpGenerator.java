@@ -39,7 +39,7 @@ public class HttpGenerator {
     }
 
     private static void createTestFile(String... classify) {
-        String outName = "Test" + httpServiceName + ".java";
+        String outName = "Test" + upperCaseInitials(httpServiceName) + ".java";
         File outParent = checkParentFile(SCRIPT_DIR, classify);
         File outFile = new File(outParent, outName);
         if (outFile.exists()) {
@@ -63,6 +63,24 @@ public class HttpGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 首字母大写
+     * @param str
+     * @return
+     */
+    private static String upperCaseInitials(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * 首字母小写
+     * @param str
+     * @return
+     */
+    private static String lowerCaseInitials(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
     /**
@@ -96,9 +114,9 @@ public class HttpGenerator {
      */
     private static void createExcelFile(String... classify) {
         File parentFile = checkParentFile(CASE_DIR, classify);
-        File outFile = new File(parentFile, "Test" + httpServiceName + ".xls");
+        File outFile = new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + ".xls");
         if (outFile.exists()) {
-            outFile.renameTo(new File(parentFile, "Test" + httpServiceName + "_bak..xls"));
+            outFile.renameTo(new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + "_bak..xls"));
             // outFile = new File(parentFile, serviceName + "_bak.xls"); //防止覆盖
         }
         HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
@@ -111,9 +129,9 @@ public class HttpGenerator {
      */
     private static void createYamlFile(String... classify) {
         File parentFile = checkParentFile(CASE_DIR, classify);
-        File outFile = new File(parentFile, "Test" + httpServiceName + ".yaml");
+        File outFile = new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + ".yaml");
         if (outFile.exists()) {
-            outFile.renameTo(new File(parentFile, "Test" + httpServiceName + "_bak.yaml"));
+            outFile.renameTo(new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + "_bak.yaml"));
         }
         // HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
         // hg.generate();
@@ -126,7 +144,8 @@ public class HttpGenerator {
     private static File checkParentFile(String dir, String... classify) {
         File parentFile;
         if (classify != null && classify.length == 1) {
-            parentFile = new File(dir + classify[0].toLowerCase());
+            //parentFile = new File(dir + classify[0].toLowerCase());
+            parentFile = new File(dir + lowerCaseInitials(classify[0]));
         } else {
             parentFile = new File(dir);
         }
