@@ -47,7 +47,8 @@ public class GenerateModule {
         //按方法依次生成Test
         methodList.forEach(gm -> {
             generateMethodTest(gm);
-            generateExcel(gm);
+            // generateExcel(gm);
+            generateYaml(gm);
         });
         System.out.println("测试类" + clazz.getName() + "测试类生成成功！");
     }
