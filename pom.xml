@@ -20,6 +20,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
         </dependency>
+        <!--调试dubbo接口依赖-->
         <!--公共出入参封装组件-->
         <dependency>
             <groupId>com.g7.framework</groupId>
