@@ -119,7 +119,7 @@ public class HttpGenerator {
         File parentFile = checkParentFile(CASE_DIR, classify);
         File outFile = new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + ".xls");
         if (outFile.exists()) {
-            outFile.renameTo(new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + "_bak..xls"));
+            outFile.renameTo(new File(parentFile, "Test" + upperCaseInitials(httpServiceName) + "_bak.xls"));
             // outFile = new File(parentFile, serviceName + "_bak.xls"); //防止覆盖
         }
         HttpExcelGenerator hg = new HttpExcelGenerator(outFile);
