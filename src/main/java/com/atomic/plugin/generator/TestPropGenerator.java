@@ -1,8 +1,7 @@
 package com.atomic.plugin.generator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author dreamyao
@@ -17,7 +16,8 @@ public class TestPropGenerator {
         if (!f.exists()) {
             try {
                 f.getParentFile().mkdirs();
-                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f),
+                                                                              StandardCharsets.UTF_8));
 
                 bw.write("#测试项目名称(必填)");
                 bw.newLine();
