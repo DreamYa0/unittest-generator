@@ -1,4 +1,4 @@
-package com.atomic.plugin.generator;
+package com.atomic.plugin.generator.dubbo;
 
 public class DubboCase {
     /**

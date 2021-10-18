@@ -1,4 +1,4 @@
-package com.atomic.plugin.generator;
+package com.atomic.plugin.generator.http;
 
 public class HttpCase {
     /**

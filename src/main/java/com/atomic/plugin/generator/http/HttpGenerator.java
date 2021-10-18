@@ -1,5 +1,6 @@
 package com.atomic.plugin.generator.http;
 
+import com.atomic.plugin.generator.TestPropGenerator;
 import com.atomic.plugin.generator.GenerateXml;
 import com.atomic.plugin.generator.YmalCaseFactory;
 
@@ -32,6 +33,8 @@ public class HttpGenerator {
             // createExcelFile();
             createYamlFile();
         }
+        //生成test.properties
+        TestPropGenerator.generateTestProperties();
         // 生成testng.xml文件
         generateRestTestBase();
         GenerateXml.getInstance().generateTestNGXml();

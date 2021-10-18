@@ -41,12 +41,7 @@ public class HttpExcelGenerator {
         writeCell(sheet, i++, 1, "", false);
         writeCell(sheet, i, 0, "method");
         writeCell(sheet, i++, 1, "", false);
-        /*List<String> paramNameList = method.getParamNameList();
-        for (String paramName : paramNameList) {
-            writeCell(sheet, i, 0, paramName);
-        }
-        JSONObject paramJson = gm.paramJSONObject;
-        writeObjectToSheet(i, paramJson, sheet);*/
+
         workbook.createSheet("exceptResult");
         try {
             FileOutputStream fo = new FileOutputStream(outFile);
@@ -74,21 +69,7 @@ public class HttpExcelGenerator {
                 System.out.println("sth is wrong");
             }
         });
-        /*Iterator<String> it = jobj.keySet().iterator();
-        while (it.hasNext()) {
-            String param = it.next();
-            Object obj = jobj.get(param);
-            if (obj != null && obj instanceof JSONObject) {
-                i = writeObjectToSheet(i, (JSONObject) obj, sheet, param);
-            } else if (obj == null) {
-                if (prefix.length == 0)
-                    writeCell(sheet, i++, 0, param);
-                else
-                    writeCell(sheet, i++, 0, prefix[0] + "." + param);
-            } else {
-                System.out.println("sth is wrong");
-            }
-        }*/
+
         return i[0];
     }
 

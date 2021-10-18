@@ -1,4 +1,4 @@
-package com.atomic.plugin.generator;
+package com.atomic.plugin.generator.http;
 
 import com.atomic.plugin.generator.service.YamlCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,19 +9,19 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DubboYamlCase implements YamlCase, Serializable {
-    private static final long serialVersionUID = -8357955180082434217L;
+public class HttpYamlCase implements YamlCase, Serializable {
+    private static final long serialVersionUID = 3186442579459262591L;
     /**
-     * Dubbo接口名称
+     * Http接口名称
      *
      */
     private String interfaceName;
 
     /**
-     * 测试用例
+     * 测试用例开关，运行测试用例
      *
      */
-    private List<DubboCase> caseList;
+    private List<HttpCase> caseList;
 
     public String getInterfaceName() {
         return interfaceName;
@@ -31,26 +31,26 @@ public class DubboYamlCase implements YamlCase, Serializable {
         this.interfaceName = interfaceName;
     }
 
-    public List<DubboCase> getDubboCaseList() {
+    public List<HttpCase> getHttpCaseList() {
         return caseList;
     }
 
-    public void setDubboCaseList(List<DubboCase> caseList) {
+    public void setHttpCaseList(List<HttpCase> caseList) {
         this.caseList = caseList;
     }
 
-    private DubboYamlCase() {
-        this.interfaceName = "Dubbo接口名称";
+    private HttpYamlCase() {
+        this.interfaceName = "Http接口名称";
         this.caseList = new ArrayList<>();
-        this.caseList.add(DubboCase.getInstance());
+        this.caseList.add(HttpCase.getInstance());
     }
 
-    private static class DubboYamlCaseClassIntance {
-        private static final DubboYamlCase instance = new DubboYamlCase();
+    private static class HttpYamlCaseClassIntance {
+        private static final HttpYamlCase instance = new HttpYamlCase();
     }
 
-    public static DubboYamlCase getInstance() {
-        return DubboYamlCaseClassIntance.instance;
+    public static HttpYamlCase getInstance() {
+        return HttpYamlCase.HttpYamlCaseClassIntance.instance;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DubboYamlCase implements YamlCase, Serializable {
             fo = new FileOutputStream(outFile);
 
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-            mapper.writeValue(outFile, DubboYamlCase.getInstance());
+            mapper.writeValue(outFile, HttpYamlCase.getInstance());
 
             fo.close();
         } catch (FileNotFoundException e) {

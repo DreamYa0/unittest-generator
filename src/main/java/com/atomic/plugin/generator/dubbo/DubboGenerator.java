@@ -1,5 +1,10 @@
-package com.atomic.plugin.generator;
+package com.atomic.plugin.generator.dubbo;
 
+import com.atomic.plugin.generator.TestPropGenerator;
+import com.atomic.plugin.generator.GenerateExcel;
+import com.atomic.plugin.generator.GenerateMethod;
+import com.atomic.plugin.generator.GenerateXml;
+import com.atomic.plugin.generator.YmalCaseFactory;
 import com.atomic.plugin.java.Services;
 import com.atomic.plugin.parser.ReadApi;
 import com.atomic.plugin.util.FileUtils;
@@ -7,22 +12,16 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Closer;
 import org.testng.Reporter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
-public class GenerateModule {
+public class DubboGenerator {
 
     private Class<?> clazz;
-    private List<GenerateMethod> methodList = Lists.newArrayList();
+    private final List<GenerateMethod> METHODS = Lists.newArrayList();
     private String serviceName;
     private String methodName;
     private String simpleTypeName;
@@ -34,18 +33,18 @@ public class GenerateModule {
      *
      * @param clazz clazz
      */
-    public GenerateModule(Class<?> clazz) {
+    public void generate(Class<?> clazz) {
         this.clazz = clazz;
         init();
         serviceName = clazz.getSimpleName();
         //生成test.properties
-        generateTestProperties();
+        TestPropGenerator.generateTestProperties();
         //生成baseTest
         generateBaseNgTest();
         // 生成testng.xml文件
         GenerateXml.getInstance().generateTestNGXml();
         //按方法依次生成Test
-        methodList.forEach(gm -> {
+        METHODS.forEach(gm -> {
             generateMethodTest(gm);
             // generateExcel(gm);
             generateYaml(gm);
@@ -58,7 +57,7 @@ public class GenerateModule {
      *
      * @param packages 包路径
      */
-    public GenerateModule(String... packages) {
+    public void generate(String... packages) {
         if (packages == null || packages.length == 0) {
             Reporter.log("------------------- 被测类包名不能为空！-------------------");
             throw new RuntimeException("被测类包名不能为空！");
@@ -72,18 +71,18 @@ public class GenerateModule {
                     init();
                     serviceName = clazz.getSimpleName();
                     //生成test.properties
-                    generateTestProperties();
+                    TestPropGenerator.generateTestProperties();
                     //生成baseTest
                     generateBaseNgTest();
                     // 生成testng.xml文件
                     GenerateXml.getInstance().generateTestNGXml();
                     //按方法依次生成Test
-                    methodList.forEach(gm -> {
+                    METHODS.forEach(gm -> {
                         generateMethodTest(gm);
                         // generateExcel(gm);
                         generateYaml(gm);
                     });
-                    methodList.clear();
+                    METHODS.clear();
                 } catch (ClassNotFoundException e) {
                     Reporter.log("------------------- 对应的服务名称不存在！-------------------");
                     throw new ClassCastException("对应的服务名称不存在！");
@@ -91,49 +90,6 @@ public class GenerateModule {
                 System.out.println("测试类" + services.getServiceName() + "生成测试用例成功！");
             });
         });
-    }
-
-
-    private void generateTestProperties() {
-        File f = new File("src/test/resources/test.properties");
-        if (!f.exists()) {
-            try {
-                f.getParentFile().mkdirs();
-                BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-                bw.write("#(必填)t1:测试环境1 t2:测试环境2 t3:测试环境3 t4:测试环境4 demo:demo环境");
-                bw.newLine();
-                bw.write("profile=t1");
-                bw.newLine();
-                bw.write("#dubbo服务的版本号");
-                bw.newLine();
-                bw.write("service.version=");
-                bw.newLine();
-                bw.write("#(必填)测试项目名称");
-                bw.newLine();
-                bw.write("project.name=");
-                bw.newLine();
-                bw.write("#(必填)测试人员");
-                bw.newLine();
-                bw.write("runner=");
-                bw.newLine();
-                bw.write("#运行指定测试包");
-                bw.newLine();
-                bw.write("run.test.packages=");
-                bw.newLine();
-                bw.write("#运行指定测试分组");
-                bw.newLine();
-                bw.write("run.test.groups=");
-                bw.newLine();
-                bw.write("#运行指定测试类");
-                bw.newLine();
-                bw.write("run.test.classes=");
-                bw.newLine();
-                bw.flush();
-                bw.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -184,41 +140,41 @@ public class GenerateModule {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
                 bw.write("package com.atomic.autotest." + serviceName.toLowerCase() + ";\n" +
-                        "\n" +
-                        "import com.atomic.autotest.BaseNgTest;\n" +
-                        "import org.testng.annotations.Test;\n" +
-                        "import com.atomic.enums.Data;\n" +
-                        "import java.util.Map;\n" +
-                        "import " + clazz.getName() + ";\n" +
-                        "import " + typeName + ";\n" +
-                        "import " + parameterTypeName + ";\n" +
-                        "\n");
+                         "\n" +
+                         "import com.atomic.autotest.BaseNgTest;\n" +
+                         "import org.testng.annotations.Test;\n" +
+                         "import com.atomic.enums.Data;\n" +
+                         "import java.util.Map;\n" +
+                         "import " + clazz.getName() + ";\n" +
+                         "import " + typeName + ";\n" +
+                         "import " + parameterTypeName + ";\n" +
+                         "\n");
                 String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
-                        "\n";
+                              "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
-                        " \t * @param context excel入参\n" +
-                        " \t */\n" +
-                        " \t@Override\n" +
-                        " \tpublic void beforeTest(Map<String, Object> context) {\n" +
-                        " \t\t\n" +
-                        " \t}");
+                         "\t/**\n" +
+                         " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
+                         " \t * @param context excel入参\n" +
+                         " \t */\n" +
+                         " \t@Override\n" +
+                         " \tpublic void beforeTest(Map<String, Object> context) {\n" +
+                         " \t\t\n" +
+                         " \t}");
                 bw.newLine();
                 bw.flush();
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
-                        " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
-                        " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
-                        " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
-                        " \t */\n" +
-                        " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
+                         "\t/**\n" +
+                         " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
+                         " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
+                         " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
+                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
+                         " \t */\n" +
+                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
                 String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName> result) {" + "\n";
                 bw.write(replaceLine(line1));
                 bw.write(" \t\t\n" +
-                        " \t}");
+                         " \t}");
                 bw.newLine();
                 bw.write("}");
                 bw.flush();
@@ -238,42 +194,42 @@ public class GenerateModule {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
                 bw.write("package com.atomic.autotest." + serviceName.toLowerCase() + ";\n" +
-                        "\n" +
-                        "import com.atomic.autotest.BaseNgTest;\n" +
-                        "import org.testng.annotations.Test;\n" +
-                        "import com.atomic.enums.Data;\n" +
-                        "import java.util.Map;\n" +
-                        "import " + clazz.getName() + ";\n" +
-                        "import " + typeName + ";\n" +
-                        "import " + parameterTypeName + ";\n" +
-                        "import " + parameterTypeName1 + ";\n" +
-                        "\n");
+                         "\n" +
+                         "import com.atomic.autotest.BaseNgTest;\n" +
+                         "import org.testng.annotations.Test;\n" +
+                         "import com.atomic.enums.Data;\n" +
+                         "import java.util.Map;\n" +
+                         "import " + clazz.getName() + ";\n" +
+                         "import " + typeName + ";\n" +
+                         "import " + parameterTypeName + ";\n" +
+                         "import " + parameterTypeName1 + ";\n" +
+                         "\n");
                 String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
-                        "\n";
+                              "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
-                        " \t * @param context excel入参\n" +
-                        " \t */\n" +
-                        " \t@Override\n" +
-                        " \tpublic void beforeTest(Map<String, Object> context) {\n" +
-                        " \t\t\n" +
-                        " \t}");
+                         "\t/**\n" +
+                         " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
+                         " \t * @param context excel入参\n" +
+                         " \t */\n" +
+                         " \t@Override\n" +
+                         " \tpublic void beforeTest(Map<String, Object> context) {\n" +
+                         " \t\t\n" +
+                         " \t}");
                 bw.newLine();
                 bw.flush();
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
-                        " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
-                        " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
-                        " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
-                        " \t */\n" +
-                        " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
+                         "\t/**\n" +
+                         " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
+                         " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
+                         " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
+                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
+                         " \t */\n" +
+                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n");
                 String line1 = " \tpublic void testCase(Map<String, Object> context, $simpleTypeName<$parameterSimpleTypeName<$parameterTypeSimpleTypeName>> result) {" + "\n";
                 bw.write(replaceLine(line1));
                 bw.write(" \t\t\n" +
-                        " \t}");
+                         " \t}");
                 bw.newLine();
                 bw.write("}");
                 bw.flush();
@@ -285,38 +241,38 @@ public class GenerateModule {
             try {
                 BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
                 bw.write("package com.atomic.autotest." + serviceName.toLowerCase() + ";\n" +
-                        "\n" +
-                        "import com.atomic.autotest.BaseNgTest;\n" +
-                        "import org.testng.annotations.Test;\n" +
-                        "import com.atomic.enums.Data;\n" +
-                        "import java.util.Map;\n" +
-                        "import " + clazz.getName() + ";\n" +
-                        "\n");
+                         "\n" +
+                         "import com.atomic.autotest.BaseNgTest;\n" +
+                         "import org.testng.annotations.Test;\n" +
+                         "import com.atomic.enums.Data;\n" +
+                         "import java.util.Map;\n" +
+                         "import " + clazz.getName() + ";\n" +
+                         "\n");
                 String line = "public class Test$methodName extends BaseNgTest<$serviceName> {" +
-                        "\n";
+                              "\n";
                 bw.write(replaceLine(line));
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
-                        " \t * @param context excel入参\n" +
-                        " \t */\n" +
-                        " \t@Override\n" +
-                        " \tpublic void beforeTest(Map<String, Object> context) {\n" +
-                        " \t\t\n" +
-                        " \t}");
+                         "\t/**\n" +
+                         " \t * 测试前执行，例如:获取数据库中的值,可以用新获取的值替换excel中的值、以及初始化测试数据\n" +
+                         " \t * @param context excel入参\n" +
+                         " \t */\n" +
+                         " \t@Override\n" +
+                         " \tpublic void beforeTest(Map<String, Object> context) {\n" +
+                         " \t\t\n" +
+                         " \t}");
                 bw.newLine();
                 bw.flush();
                 bw.write("\n" +
-                        "\t/**\n" +
-                        " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
-                        " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
-                        " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
-                        " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
-                        " \t */\n" +
-                        " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n" +
-                        " \tpublic void testCase(Map<String, Object> context, Object result) {\n" +
-                        " \t\t\n" +
-                        " \t}");
+                         "\t/**\n" +
+                         " \t * @RollBack( dbName = \"数据库库名\",tableName={\"表名1\",\"表名2\"})注解实现单库多表数据回滚\n" +
+                         " \t * @RollBackAll( dbAndTable = \"{\"库名1.表名1\",\"库名2.表名1\"}\")注解实现多库多表数据回滚\n" +
+                         " \t * @AutoTest( autoTestMode = AutoTestMode.XXXXX)注解实现自动化测试\n" +
+                         " \t * @Test( dataProvider = Data.SINGLE(测试用例串行执行),Data.PARALLEL(测试用例并行执行))\n" +
+                         " \t */\n" +
+                         " \t@Test(dataProvider = Data.SINGLE,enabled = false)\n" +
+                         " \tpublic void testCase(Map<String, Object> context, Object result) {\n" +
+                         " \t\t\n" +
+                         " \t}");
                 bw.newLine();
                 bw.write("}");
                 bw.flush();
@@ -346,12 +302,12 @@ public class GenerateModule {
         if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
-//        File outFile = new File(parentFile, "Test" + methodName + ".xls");
+        //        File outFile = new File(parentFile, "Test" + methodName + ".xls");
         File outFile = new File(parentFile, "Test" + methodName + ".yaml");
         if (outFile.exists()) {
             return; //不覆盖
         }
-//        new GenerateExcel(Lists.newArrayList(gm), outFile);
+        //        new GenerateExcel(Lists.newArrayList(gm), outFile);
         YmalCaseFactory.GenerateDubboYamlCase(outFile);
         // handleFile(Lists.newArrayList(gm), outFile);
     }
@@ -404,7 +360,7 @@ public class GenerateModule {
 
     private void init() {
         if (clazz != null) {
-            Arrays.stream(clazz.getMethods()).forEach(method -> methodList.add(new GenerateMethod(method)));
+            Arrays.stream(clazz.getMethods()).forEach(method -> METHODS.add(new GenerateMethod(method)));
         }
     }
 

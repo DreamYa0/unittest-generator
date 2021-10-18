@@ -1,5 +1,8 @@
 package com.atomic.plugin.generator;
 
+import com.atomic.plugin.generator.dubbo.DubboYamlCase;
+import com.atomic.plugin.generator.http.HttpYamlCase;
+
 import java.io.File;
 
 public class YmalCaseFactory {
