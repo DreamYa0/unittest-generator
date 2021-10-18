@@ -45,12 +45,8 @@ public class HttpYamlCase implements YamlCase, Serializable {
         this.caseList.add(HttpCase.getInstance());
     }
 
-    private static class HttpYamlCaseClassIntance {
-        private static final HttpYamlCase instance = new HttpYamlCase();
-    }
-
     public static HttpYamlCase getInstance() {
-        return HttpYamlCase.HttpYamlCaseClassIntance.instance;
+        return new HttpYamlCase();
     }
 
     @Override
@@ -63,8 +59,6 @@ public class HttpYamlCase implements YamlCase, Serializable {
             mapper.writeValue(outFile, HttpYamlCase.getInstance());
 
             fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
